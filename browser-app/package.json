@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "name": "browser-app",
+  "version": "0.0.0",
+  "dependencies": {
+    "@theia/core": "0.3.12",
+    "@theia/filesystem": "0.3.12",
+    "@theia/workspace": "0.3.12",
+    "@theia/preferences": "0.3.12",
+    "@theia/navigator": "0.3.12",
+    "@theia/process": "0.3.12",
+    "@theia/terminal": "0.3.12",
+    "@theia/editor": "0.3.12",
+    "@theia/languages": "0.3.12",
+    "@theia/markers": "0.3.12",
+    "@theia/monaco": "0.3.12",
+    "@theia/task": "0.3.12",
+    "@theia/typescript": "0.3.12",
+    "@theia/messages": "0.3.12",
+    "@theia/variable-resolver": "0.3.12",
+    "@eclipse-che/theia-task-extension": "0.0.0"
+  },
+  "devDependencies": {
+    "@theia/cli": "0.3.12"
+  },
+  "scripts": {
+    "prepare": "theia build --mode development",    
+    "start": "theia start",
+    "watch": "theia build --watch --mode development"
+  },
+  "theia": {
+    "target": "browser"
+  }
+}
