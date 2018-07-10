@@ -33,22 +33,26 @@ export class CheTaskResolver implements TaskResolver {
     protected readonly cheWorkspaceClient: CheWorkspaceClient;
 
     @inject(MachinePicker)
-    protected readonly machineQuickOpen: MachinePicker;
+    protected readonly machinePicker: MachinePicker;
 
     async resolveTask(taskConfig: TaskConfiguration): Promise<TaskConfiguration> {
         if (taskConfig.type !== CHE_TASK_TYPE) {
             throw new Error(`Unsupported task configuration type: ${taskConfig.type}`);
         }
         const cheTaskConfig = taskConfig as CheTaskConfiguration;
+        const target = cheTaskConfig.target;
         const resultTarget: Target = {};
 
-        if (!cheTaskConfig.target) {
-            resultTarget.workspaceId = await this.cheWorkspaceClient.getWorkspaceId();
-            resultTarget.machineName = await this.machineQuickOpen.pick();
+        if (target && target.workspaceId) {
+            resultTarget.workspaceId = target.workspaceId
         } else {
-            const target = cheTaskConfig.target;
-            resultTarget.workspaceId = target.workspaceId ? target.workspaceId : await this.cheWorkspaceClient.getWorkspaceId();
-            resultTarget.machineName = target.machineName ? target.machineName : await this.machineQuickOpen.pick();
+            resultTarget.workspaceId = await this.cheWorkspaceClient.getWorkspaceId();
+        }
+
+        if (target && target.machineName) {
+            resultTarget.machineName = target.machineName;
+        } else {
+            resultTarget.machineName = await this.machinePicker.pick();
         }
 
         const resultTask: CheTaskConfiguration = {

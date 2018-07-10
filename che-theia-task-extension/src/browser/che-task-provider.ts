@@ -32,19 +32,19 @@ export class CheTaskProvider implements TaskProvider {
                 type: CHE_TASK_TYPE,
                 label: `${command.name}`,
                 command: command.commandLine,
-                previewUrl: this.getPreviewURL(command)
+                previewUrl: this.getCommandAttribute(command, 'previewUrl')
             };
             tasks.push(providedTask);
         }
         return tasks;
     }
 
-    protected getPreviewURL(command: ICommand): string | undefined {
+    protected getCommandAttribute(command: ICommand, attrName: string): string | undefined {
         if (!command.attributes) {
             return undefined;
         }
         for (const attr in command.attributes) {
-            if (attr === 'previewUrl') {
+            if (attr === attrName) {
                 return command.attributes[attr];
             }
         }
