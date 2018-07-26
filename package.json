@@ -9,8 +9,5 @@
   },
   "workspaces": [
     "che-theia-task-extension", "browser-app"
-  ],
-  "resolutions": {
-    "node-pty": "0.7.4"
-  }
+  ]
 }
