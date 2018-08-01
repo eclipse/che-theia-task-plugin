@@ -80,7 +80,7 @@ export class CheWorkspaceClient {
     }
 
     async getCheApiEndPoint(): Promise<string | undefined> {
-        return this.getEnvVarValue('CHE_API');
+        return this.getEnvVarValue('CHE_API_EXTERNAL');
 
     }
 
