@@ -24,7 +24,7 @@
     "@theia/cli": "0.3.12"
   },
   "scripts": {
-    "prepare": "theia build --mode development",    
+    "prepare": "theia build --mode development",
     "start": "theia start",
     "watch": "theia build --watch --mode development"
   },
