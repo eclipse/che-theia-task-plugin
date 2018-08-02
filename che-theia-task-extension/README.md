@@ -29,6 +29,8 @@ The variables substitution is supported for the `command` and `previewUrl` field
 
 ## Requirements
 
+**Note,** currently che-theia-task-extension works with the Che workspaces run on Docker only since it completelly relies on the [machine-exec server](https://github.com/eclipse/che-theia-terminal-plugin/tree/master/machine-exec-server) which temporary has it's limitation.
+
 The environment variables have to be set:
 - `CHE_API`
 - `CHE_WORKSPACE_ID`
@@ -57,6 +59,9 @@ A machine with the running [machine-exec server](https://github.com/eclipse/che-
 ```
 
 ## How to run the extension with Che?
+
+**Note,** currently che-theia-task-extension works with the Che workspaces run on Docker only since it completelly relies on the [machine-exec server](https://github.com/eclipse/che-theia-terminal-plugin/tree/master/machine-exec-server) which temporary has it's limitation.
+
 Note, for now, the che-theia-task-extension isn't included into the [eclipse/che-theia](https://hub.docker.com/r/eclipse/che-theia/) docker image and [machine-exec](https://github.com/eclipse/che-theia-terminal-plugin/tree/master/machine-exec-server) server isn't in the Theia stack due to several issues ([#1](https://github.com/eclipse/che/issues/10590), [#2](https://github.com/eclipse/che/issues/10357), [#3](https://github.com/eclipse/che/issues/10358)).
 So, in order to run the che-theia-task-extension with Che some manual steps are required:
 - add [che-theia-task-extension](https://github.com/eclipse/che-theia-task-plugin) into [extensions.json](https://github.com/eclipse/che/blob/master/dockerfiles/theia/src/extensions.json) and build [che-theia image](https://github.com/eclipse/che/tree/master/dockerfiles/theia);
