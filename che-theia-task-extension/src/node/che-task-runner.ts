@@ -58,6 +58,7 @@ export class CheTaskRunner implements TaskRunner {
 
         let execId = 0;
         try {
+            await  this.machineExecClientFactory.fetchMachineExecServerURL();
             const execCreateClient = this.machineExecClientFactory.createExecClient();
             execId = await execCreateClient.create(machineExec);
 

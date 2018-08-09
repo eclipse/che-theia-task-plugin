@@ -25,7 +25,7 @@ export class CheWorkspaceClient {
     protected async init() {
         const cheApiEndpoint = await this.getCheApiEndPoint();
         if (!cheApiEndpoint) {
-            throw new Error('Environment variable CHE_API is not set.');
+            throw new Error('Environment variable CHE_API_EXTERNAL is not set.');
         }
 
         const restAPIConfig: IRestAPIConfig = {
