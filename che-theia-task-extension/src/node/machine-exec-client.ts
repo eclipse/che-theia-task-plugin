@@ -48,11 +48,17 @@ export class MachineExecClientFactory {
 
     @postConstruct()
     protected async init() {
-        this.machineExecServerEndpoint = await this.cheWorkspaceClient.getMachineExecServerURL();
+        await this.fetchMachineExecServerURL();
+    }
+
+    async fetchMachineExecServerURL(): Promise<void> {
+        if (this.machineExecServerEndpoint === undefined) {
+            this.machineExecServerEndpoint = await this.cheWorkspaceClient.getMachineExecServerURL();
+        }
     }
 
     createExecClient(): ExecCreateClient {
-        if (!this.machineExecServerEndpoint) {
+        if (this.machineExecServerEndpoint === undefined) {
             throw new Error('Machine-exec server is not found in the current workspace.');
         }
         if (!this.execClient) {
@@ -62,7 +68,7 @@ export class MachineExecClientFactory {
     }
 
     createAttachClient(id: number): ExecAttachClient {
-        if (!this.machineExecServerEndpoint) {
+        if (this.machineExecServerEndpoint === undefined) {
             throw new Error('Machine-exec server is not found in the current workspace.');
         }
         return this.wsConnectionProvider.createProxy<ExecAttachClient>(`${this.machineExecServerEndpoint}/attach/${id}`);

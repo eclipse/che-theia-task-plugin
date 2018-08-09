@@ -32,7 +32,7 @@ The variables substitution is supported for the `command` and `previewUrl` field
 **Note,** currently che-theia-task-extension works with the Che workspaces run on Docker only since it completelly relies on the [machine-exec server](https://github.com/eclipse/che-theia-terminal-plugin/tree/master/machine-exec-server) which temporary has it's limitation.
 
 The environment variables have to be set:
-- `CHE_API`
+- `CHE_API_EXTERNAL`
 - `CHE_WORKSPACE_ID`
 
 The following mount should be set in the `che.env` file: `CHE_WORKSPACE_VOLUME=/var/run/docker.sock:/var/run/docker.sock;`
