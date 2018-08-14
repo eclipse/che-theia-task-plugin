@@ -14,7 +14,8 @@ import {VariableContribution, VariableRegistry} from '@theia/variable-resolver/l
 import {CheWorkspaceClient} from '../common/che-workspace-client';
 import {WorkspaceService} from '@theia/workspace/lib/browser/workspace-service';
 import {SelectionService} from '@theia/core/lib/common';
-import URI from '@theia/core/lib/common/uri';
+import {FileStat} from '@theia/filesystem/lib/common/filesystem';
+import {MessageService} from '@theia/core/lib/common/message-service';
 
 /**
  * Contributes the path for current project as a relative path to the first directory under the root workspace.
@@ -28,6 +29,8 @@ export class ProjectPathVariableContribution implements VariableContribution {
     protected readonly cheWsClient: CheWorkspaceClient;
     @inject(SelectionService)
     protected readonly selectionService: SelectionService;
+    @inject(MessageService)
+    protected readonly messageService: MessageService;
 
     async registerVariables(variables: VariableRegistry): Promise<void> {
 
@@ -35,26 +38,38 @@ export class ProjectPathVariableContribution implements VariableContribution {
             name: 'current.project.path',
             description: 'The path of the project root folder',
             resolve: async () => {
-                const wsRoot = await this.workspaceService.root;
-                if (!wsRoot || !wsRoot.uri) {
-                    return undefined;
-                }
-                const rootWorkspaceUri = new URI(wsRoot.uri);
+                let errorMessage = 'Get \'current.project.path\' variable error. ';
 
                 const selection = this.selectionService.selection;
-                if (!Array.isArray(selection) || !selection[0] || !selection[0].fileStat) {
+                if (!Array.isArray(selection) || !selection[0] || !selection[0].fileStat || !selection[0].fileStat.uri) {
+                    errorMessage += 'Any selections are not defined in the project tree.';
+                    await this.messageService.error(errorMessage);
                     return undefined;
                 }
-                const selectionUri = new URI(selection[0]!.fileStat!.uri);
+                const selectionUri = selection[0]!.fileStat!.uri;
 
-                const rootWorkspacePath = rootWorkspaceUri.path.toString();
-                const selectionPath = selectionUri.path.toString();
-                if (!selectionPath.startsWith(rootWorkspacePath)) {
+                const wsRoot = await this.workspaceService.root;
+                const currentRoot = Array.isArray(wsRoot) ? (<Array<FileStat>>wsRoot).find((root: FileStat) => {
+                    // if multi-root
+                    return selectionUri.startsWith(root.uri);
+                }) : <FileStat>wsRoot;
+                if (!currentRoot || !currentRoot.uri) {
+                    errorMessage += 'Get current workspace root URI error.';
+                    await this.messageService.error(errorMessage);
+                    return undefined;
+                }
+                const rootWorkspaceUri = currentRoot.uri;
+
+                if (!selectionUri.startsWith(rootWorkspaceUri)) {
+                    errorMessage += 'The selection isn\'t under the current workspace root folder.';
+                    await this.messageService.error(errorMessage);
                     return undefined;
                 }
 
-                const relativeSelectionPath = selectionPath.substr(rootWorkspacePath.length);
+                const relativeSelectionPath = selectionUri.substr(rootWorkspaceUri.length);
                 if (!relativeSelectionPath.length) {
+                    errorMessage += 'The selection is on workspace root folder. Select a project.';
+                    await this.messageService.error(errorMessage);
                     return undefined;
                 }
                 const splitter = '/';

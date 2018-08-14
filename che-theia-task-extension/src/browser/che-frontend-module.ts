@@ -26,7 +26,7 @@ import { PreviewUrlIndicator } from './preview-url-indicator';
 import { PreviewUrlQuickOpen } from './preview-url-quick-open';
 import { ServerVariablesContribution } from './server-variables-contribution';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
-import { ProjectPathVariableContribution } from "./che-task-variables-contribution";
+import { ProjectPathVariableContribution } from './che-task-variables-contribution';
 
 export default new ContainerModule(bind => {
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
