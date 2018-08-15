@@ -38,11 +38,11 @@ export class ProjectPathVariableContribution implements VariableContribution {
             name: 'current.project.path',
             description: 'The path of the project root folder',
             resolve: async () => {
-                let errorMessage = 'Get \'current.project.path\' variable error. ';
+                let errorMessage = 'Can not resolve \'current.project.path\' variable. ';
 
                 const selection = this.selectionService.selection;
                 if (!Array.isArray(selection) || !selection[0] || !selection[0].fileStat || !selection[0].fileStat.uri) {
-                    errorMessage += 'Any selections are not defined in the project tree.';
+                    errorMessage += 'No item selected in the project explorer.';
                     await this.messageService.error(errorMessage);
                     return undefined;
                 }
@@ -68,7 +68,7 @@ export class ProjectPathVariableContribution implements VariableContribution {
 
                 const relativeSelectionPath = selectionUri.substr(rootWorkspaceUri.length);
                 if (!relativeSelectionPath.length) {
-                    errorMessage += 'The selection is on workspace root folder. Select a project.';
+                    errorMessage += 'Workspace root folder is selected and is not a project. Please select a project.';
                     await this.messageService.error(errorMessage);
                     return undefined;
                 }
