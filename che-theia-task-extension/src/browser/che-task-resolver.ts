@@ -43,7 +43,7 @@ export class CheTaskResolver implements TaskResolver {
         const resultTarget: Target = {};
 
         if (target && target.workspaceId) {
-            resultTarget.workspaceId = target.workspaceId
+            resultTarget.workspaceId = target.workspaceId;
         } else {
             resultTarget.workspaceId = await this.cheWorkspaceClient.getWorkspaceId();
         }
