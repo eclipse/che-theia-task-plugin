@@ -43,9 +43,9 @@ export class CheWorkspaceClient {
 
     protected async getMachineExecServer(): Promise<IServer | undefined> {
         const machines = await this.getMachines();
-        for (let machineName in machines) {
+        for (const machineName in machines) {
             const servers = machines[machineName].servers;
-            for (let serverName in servers) {
+            for (const serverName in servers) {
                 const serverAttributes = servers[serverName].attributes;
                 if (serverAttributes && serverAttributes['type'] === 'terminal') {
                     return servers[serverName];

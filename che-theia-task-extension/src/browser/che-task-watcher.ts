@@ -33,7 +33,7 @@ export class CheTaskWatcher implements FrontendApplicationContribution {
     protected readonly workspaceService: WorkspaceService;
 
     onStart(): void {
-        // wait for the workspace root to be set    
+        // wait for the workspace root to be set
         this.workspaceService.root.then(async root => {
             if (root) {
                 this.workspaceRootUri = root.uri;
