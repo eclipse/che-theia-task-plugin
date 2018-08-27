@@ -14,13 +14,13 @@ import { TaskFactory, TaskCheOptions, CheTask } from './che-task';
 import { CheTaskRunner } from './che-task-runner';
 import { CheTaskRunnerContribution } from './che-task-runner-contribution';
 import { MachineExecClientFactory } from './machine-exec-client';
-import { WebSocketConnectionProvider } from './messaging/ws-connection-provider';
+import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
 
 export default new ContainerModule(bind => {
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
 
-    bind(WebSocketConnectionProvider).toSelf().inSingletonScope();
+    bind(JsonRpcProxyProvider).toSelf().inSingletonScope();
     bind(MachineExecClientFactory).toSelf().inSingletonScope();
 
     bind(CheTaskRunner).toSelf().inSingletonScope();
