@@ -25,8 +25,14 @@ export class ServerVariablesContribution implements VariableContribution {
     async registerVariables(variables: VariableRegistry): Promise<void> {
         const machines = await this.cheWsClient.getMachines();
         for (const machineName in machines) {
+            if (!machines.hasOwnProperty(machineName)) {
+                continue;
+            }
             const servers = machines[machineName].servers;
             for (const serverName in servers) {
+                if (!servers.hasOwnProperty(serverName)) {
+                    continue;
+                }
                 const url = servers[serverName].url;
                 variables.registerVariable({
                     name: `server.${serverName}`,
