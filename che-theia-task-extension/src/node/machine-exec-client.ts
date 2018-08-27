@@ -9,7 +9,7 @@
  **********************************************************************/
 
 import { injectable, inject, postConstruct } from 'inversify';
-import { WebSocketConnectionProvider } from './messaging/ws-connection-provider';
+import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
 
 export interface MachineIdentifier {
@@ -39,8 +39,8 @@ export class MachineExecClientFactory {
     private machineExecServerEndpoint: string;
     private execClient: ExecCreateClient;
 
-    @inject(WebSocketConnectionProvider)
-    protected readonly wsConnectionProvider: WebSocketConnectionProvider;
+    @inject(JsonRpcProxyProvider)
+    protected readonly jsonRpcProxyProvider: JsonRpcProxyProvider;
 
     @inject(CheWorkspaceClient)
     protected readonly cheWorkspaceClient: CheWorkspaceClient;
@@ -61,7 +61,7 @@ export class MachineExecClientFactory {
             throw new Error('Machine-exec server is not found in the current workspace.');
         }
         if (!this.execClient) {
-            this.execClient = this.wsConnectionProvider.createProxy<ExecCreateClient>(`${this.machineExecServerEndpoint}/connect`);
+            this.execClient = this.jsonRpcProxyProvider.createProxy<ExecCreateClient>(`${this.machineExecServerEndpoint}/connect`);
         }
         return this.execClient;
     }
@@ -70,6 +70,6 @@ export class MachineExecClientFactory {
         if (this.machineExecServerEndpoint === undefined) {
             throw new Error('Machine-exec server is not found in the current workspace.');
         }
-        return this.wsConnectionProvider.createProxy<ExecAttachClient>(`${this.machineExecServerEndpoint}/attach/${id}`);
+        return this.jsonRpcProxyProvider.createProxy<ExecAttachClient>(`${this.machineExecServerEndpoint}/attach/${id}`);
     }
 }
