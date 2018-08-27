@@ -56,7 +56,9 @@ export class MachinePicker implements QuickOpenModel {
         const machineNames: string[] = [];
         const machines = await this.cheWorkspaceClient.getMachines();
         for (const machineName in machines) {
-            machineNames.push(machineName);
+            if (machines.hasOwnProperty(machineName)) {
+                machineNames.push(machineName);
+            }
         }
         return machineNames;
     }
