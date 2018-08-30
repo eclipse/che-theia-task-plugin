@@ -10,6 +10,7 @@
 
 import { injectable, inject, postConstruct } from 'inversify';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
+import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskService } from '@theia/task/lib/browser';
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
 import * as React from 'react';
@@ -24,6 +25,9 @@ export class PreviewsWidget extends ReactWidget {
 
     @inject(VariableResolverService)
     protected readonly variableResolverService: VariableResolverService;
+
+    @inject(WindowService)
+    protected readonly windowService: WindowService;
 
     protected readonly urls: string[];
 
@@ -74,6 +78,10 @@ export class PreviewsWidget extends ReactWidget {
         return this.urls.map(url =>
             <div className='row'>
                 <span className='url'>{url}</span>
+                <button className='theia-button'
+                    onClick={event => {
+                        this.windowService.openNewWindow(url);
+                    }}>Open</button>
             </div>);
     }
 }
