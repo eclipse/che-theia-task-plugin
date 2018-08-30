@@ -71,7 +71,8 @@ export class CheTaskRunner implements TaskRunner {
                 config: taskConfig
             });
         } catch (err) {
-            throw new Error(`Failed to execute Che command: ${err}`);
+            console.error('Failed to execute Che command:', err);
+            throw new Error(`Failed to execute Che command: ${err.message}`);
         }
     }
 }
