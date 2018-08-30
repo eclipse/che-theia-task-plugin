@@ -23,6 +23,7 @@ import { CHE_TERMINAL_WIDGET_FACTORY_ID, CheTerminalWidget, CheTerminalWidgetOpt
 import { MachinePicker } from './machine-picker';
 import { PreviewUrlIndicator } from './preview-url-indicator';
 import { PreviewUrlQuickOpen } from './preview-url-quick-open';
+import { PreviewUrlService } from './preview/preview-url-service';
 import { PreviewsWidget } from './preview/previews-widget';
 import { PREVIEWS_WIDGET_FACTORY_ID, PreviewsContribution } from './preview/previews-contribution';
 import { ServerVariablesContribution } from './server-variables-contribution';
@@ -82,4 +83,5 @@ export default new ContainerModule(bind => {
         id: PREVIEWS_WIDGET_FACTORY_ID,
         createWidget: () => ctx.container.get(PreviewsWidget)
     }));
+    bind(PreviewUrlService).toSelf().inSingletonScope();
 });

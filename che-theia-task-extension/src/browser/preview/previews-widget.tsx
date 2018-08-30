@@ -13,8 +13,9 @@ import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskService } from '@theia/task/lib/browser';
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
-import * as React from 'react';
+import { PreviewUrlService } from './preview-url-service';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../../common/task-protocol';
+import * as React from 'react';
 
 /** Displays the preview URLs for all running Che tasks. */
 @injectable()
@@ -29,12 +30,15 @@ export class PreviewsWidget extends ReactWidget {
     @inject(WindowService)
     protected readonly windowService: WindowService;
 
-    protected readonly urls: string[];
+    @inject(PreviewUrlService)
+    protected readonly previewUrlService: PreviewUrlService;
+
+    protected readonly urls: { link: string, label: string }[];
 
     constructor() {
         super();
         this.id = 'previewUrls';
-        this.addClass('previews');
+        this.addClass('preview-urls');
         this.title.label = 'Preview URLs';
         this.title.iconClass = 'fa fa-link';
         this.title.closable = true;
@@ -49,7 +53,7 @@ export class PreviewsWidget extends ReactWidget {
     protected async fetchUrls(): Promise<void> {
         for (const task of await this.getCheTasks()) {
             const resolvedURL = await this.variableResolverService.resolve(task.previewUrl!);
-            this.urls.push(resolvedURL);
+            this.urls.push({ link: resolvedURL, label: task.label });
         }
     }
 
@@ -76,12 +80,16 @@ export class PreviewsWidget extends ReactWidget {
 
     protected renderURLs(): React.ReactNode[] {
         return this.urls.map(url =>
-            <div className='row'>
-                <span className='url'>{url}</span>
-                <button className='theia-button'
-                    onClick={event => {
-                        this.windowService.openNewWindow(url);
-                    }}>Open</button>
+            <div className='url-container'>
+                <span className='link'>{url.link}</span>
+                <span className='label'>{url.label}</span>
+                <div className='buttons-container'>
+                    <button className='theia-button' onClick={event => this.urlClickInternal(url.link, url.label)}>Preview</button>
+                    <button className='theia-button' onClick={event => this.urlClickExternal(url.link)}>Go to URL</button>
+                </div>
             </div>);
     }
+
+    protected urlClickInternal = (url: string, label: string) => this.previewUrlService.open(url, label);
+    protected urlClickExternal = (url: string) => this.windowService.openNewWindow(url);
 }

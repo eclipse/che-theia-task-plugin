@@ -8,19 +8,37 @@
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
 
-.previews .container {
+.preview-urls .container {
     padding: var(--theia-ui-padding) 0 var(--theia-ui-padding) 0;
     color: var(--theia-ui-font-color1);
 }
 
-.previews .row {
+.preview-urls .url-container {
     padding: var(--theia-ui-padding) 0 var(--theia-ui-padding) 0;
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
 }
 
-.previews .row:hover {
+.preview-urls .url-container:hover {
     background-color: var(--theia-accent-color4);
 }
 
-.previews .row .url {
+.preview-urls span {
     margin-left: var(--theia-ui-padding);
+}
+
+.preview-urls .link {
+    color: var(--theia-ui-font-color1);
+}
+
+.preview-urls .label {
+    color: var(--theia-ui-font-color2);
+}
+
+.preview-urls .buttons-container {
+    margin-right: var(--theia-ui-padding);
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
 }
