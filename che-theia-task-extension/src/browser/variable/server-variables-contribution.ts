@@ -10,7 +10,7 @@
 
 import { inject, injectable } from 'inversify';
 import { VariableContribution, VariableRegistry } from '@theia/variable-resolver/lib/browser';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClient } from '../../common/che-workspace-client';
 
 /**
  * Contributes the substitution variables, in form of `server.<name>`,

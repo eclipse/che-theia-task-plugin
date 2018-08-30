@@ -10,7 +10,6 @@
 
 import { ContainerModule, Container } from 'inversify';
 import { WidgetFactory, FrontendApplicationContribution, bindViewContribution } from '@theia/core/lib/browser';
-import { CommandContribution } from '@theia/core/lib/common/command';
 import { TaskContribution } from '@theia/task/lib/browser';
 import { TerminalWidgetOptions } from '@theia/terminal/lib/browser/base/terminal-widget';
 import { VariableContribution } from '@theia/variable-resolver/lib/browser';
@@ -21,14 +20,12 @@ import { CheTaskResolver } from './che-task-resolver';
 import { CheTaskWatcher } from './che-task-watcher';
 import { CHE_TERMINAL_WIDGET_FACTORY_ID, CheTerminalWidget, CheTerminalWidgetOptions } from './che-terminal-widget';
 import { MachinePicker } from './machine-picker';
-import { PreviewUrlIndicator } from './preview-url-indicator';
-import { PreviewUrlQuickOpen } from './preview-url-quick-open';
+import { PREVIEWS_WIDGET_FACTORY_ID, PreviewsContribution } from './preview/previews-contribution';
 import { PreviewUrlService } from './preview/preview-url-service';
 import { PreviewsWidget } from './preview/previews-widget';
-import { PREVIEWS_WIDGET_FACTORY_ID, PreviewsContribution } from './preview/previews-contribution';
-import { ServerVariablesContribution } from './server-variables-contribution';
+import { ServerVariablesContribution } from './variable/server-variables-contribution';
+import { ProjectPathVariableContribution } from './variable/che-task-variables-contribution';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
-import { ProjectPathVariableContribution } from './che-task-variables-contribution';
 
 import '../../src/browser/preview/style/index.css';
 
@@ -44,11 +41,6 @@ export default new ContainerModule(bind => {
     bind(CheTaskResolver).toSelf().inSingletonScope();
     bind(CheTaskContribution).toSelf().inSingletonScope();
     bind(TaskContribution).toService(CheTaskContribution);
-
-    bind(PreviewUrlQuickOpen).toSelf().inSingletonScope();
-    bind(PreviewUrlIndicator).toSelf().inSingletonScope();
-    bind(FrontendApplicationContribution).toService(PreviewUrlIndicator);
-    bind(CommandContribution).toService(PreviewUrlIndicator);
 
     bind(CheTaskWatcher).toSelf().inSingletonScope();
     bind(FrontendApplicationContribution).toService(CheTaskWatcher);
@@ -76,9 +68,9 @@ export default new ContainerModule(bind => {
 
     bind(CheTaskService).toSelf().inSingletonScope();
 
-    bind(FrontendApplicationContribution).toService(PreviewsContribution);
     bindViewContribution(bind, PreviewsContribution);
-    bind(PreviewsWidget).toSelf();
+    bind(FrontendApplicationContribution).toService(PreviewsContribution);
+    bind(PreviewsWidget).toSelf().inSingletonScope();
     bind(WidgetFactory).toDynamicValue(ctx => ({
         id: PREVIEWS_WIDGET_FACTORY_ID,
         createWidget: () => ctx.container.get(PreviewsWidget)
