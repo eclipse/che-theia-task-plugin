@@ -16,12 +16,16 @@ import { CheTaskRunnerContribution } from './che-task-runner-contribution';
 import { MachineExecClientFactory } from './machine-exec-client';
 import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
+import { CheApiInternalEndPointProvider } from './che-api-internal-endpoint-provider';
 
 export default new ContainerModule(bind => {
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
 
     bind(JsonRpcProxyProvider).toSelf().inSingletonScope();
     bind(MachineExecClientFactory).toSelf().inSingletonScope();
+
+    bind(CheApiEndPointProvider).to(CheApiInternalEndPointProvider).inSingletonScope();
 
     bind(CheTaskRunner).toSelf().inSingletonScope();
     bind(TaskRunner).to(CheTaskRunner).inSingletonScope();
