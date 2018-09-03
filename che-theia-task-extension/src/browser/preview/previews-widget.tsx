@@ -9,6 +9,7 @@
  **********************************************************************/
 
 import { injectable, inject, postConstruct } from 'inversify';
+import { Message } from '@phosphor/messaging';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskService } from '@theia/task/lib/browser';
@@ -50,6 +51,13 @@ export class PreviewsWidget extends ReactWidget {
         this.fetchUrls().then(() => this.update());
     }
 
+    // TODO: Widget was activated, but did not accept focus: previewUrls
+    protected onActivateRequest(msg: Message): void {
+        super.onActivateRequest(msg);
+        this.node.focus();
+        this.update();
+    }
+
     protected async fetchUrls(): Promise<void> {
         for (const task of await this.getCheTasks()) {
             const resolvedURL = await this.variableResolverService.resolve(task.previewUrl!);
@@ -79,13 +87,13 @@ export class PreviewsWidget extends ReactWidget {
     }
 
     protected renderURLs(): React.ReactNode[] {
-        return this.urls.map(url =>
-            <div className='url-container'>
-                <span className='link'>{url.link}</span>
-                <span className='label'>{url.label}</span>
-                <div className='buttons-container'>
-                    <button className='theia-button' onClick={event => this.urlClickInternal(url.link, url.label)}>Preview</button>
-                    <button className='theia-button' onClick={event => this.urlClickExternal(url.link)}>Go to URL</button>
+        return this.urls.map((url, idx) =>
+            <div key={url.label + idx} className='url-container'>
+                <span key='link' className='link'>{url.link}</span>
+                <span key='label' className='label'>{url.label}</span>
+                <div key='actions' className='buttons-container'>
+                    <button key='preview-url' className='theia-button' onClick={event => this.urlClickInternal(url.link, url.label)}>Preview</button>
+                    <button key='goto-url' className='theia-button' onClick={event => this.urlClickExternal(url.link)}>Go to URL</button>
                 </div>
             </div>);
     }
