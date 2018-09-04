@@ -9,7 +9,7 @@
  **********************************************************************/
 
 import { ContainerModule, Container } from 'inversify';
-import { WidgetFactory, FrontendApplicationContribution, bindViewContribution } from '@theia/core/lib/browser';
+import { WidgetFactory, FrontendApplicationContribution } from '@theia/core/lib/browser';
 import { TaskContribution } from '@theia/task/lib/browser';
 import { TerminalWidgetOptions } from '@theia/terminal/lib/browser/base/terminal-widget';
 import { VariableContribution } from '@theia/variable-resolver/lib/browser';
@@ -20,20 +20,17 @@ import { CheTaskResolver } from './che-task-resolver';
 import { CheTaskWatcher } from './che-task-watcher';
 import { CHE_TERMINAL_WIDGET_FACTORY_ID, CheTerminalWidget, CheTerminalWidgetOptions } from './che-terminal-widget';
 import { MachinePicker } from './machine-picker';
-import { PREVIEWS_WIDGET_FACTORY_ID, PreviewsContribution } from './preview/previews-contribution';
-import { PreviewUrlService } from './preview/preview-url-service';
-import { PreviewsWidget } from './preview/previews-widget';
 import { ServerVariablesContribution } from './variable/server-variables-contribution';
 import { ProjectPathVariableContribution } from './variable/che-task-variables-contribution';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
 import { CheApiExternalEndPointProvider } from './che-api-external-endpoint-provider';
+import { bindPreviewModule } from './preview/che-task-preview-frontend-module';
 import { bindCheTaskPreferences } from './task-preferences';
-
-import '../../src/browser/preview/style/index.css';
 
 export default new ContainerModule(bind => {
     bindCheTaskPreferences(bind);
+    bindPreviewModule(bind);
 
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
 
@@ -74,13 +71,4 @@ export default new ContainerModule(bind => {
     }));
 
     bind(CheTaskService).toSelf().inSingletonScope();
-
-    bindViewContribution(bind, PreviewsContribution);
-    bind(FrontendApplicationContribution).toService(PreviewsContribution);
-    bind(PreviewsWidget).toSelf().inSingletonScope();
-    bind(WidgetFactory).toDynamicValue(ctx => ({
-        id: PREVIEWS_WIDGET_FACTORY_ID,
-        createWidget: () => ctx.container.get(PreviewsWidget)
-    }));
-    bind(PreviewUrlService).toSelf().inSingletonScope();
 });
