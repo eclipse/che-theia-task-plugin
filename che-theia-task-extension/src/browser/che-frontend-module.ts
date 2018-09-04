@@ -26,6 +26,8 @@ import { PreviewsWidget } from './preview/previews-widget';
 import { ServerVariablesContribution } from './variable/server-variables-contribution';
 import { ProjectPathVariableContribution } from './variable/che-task-variables-contribution';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
+import { CheApiExternalEndPointProvider } from './che-api-external-endpoint-provider';
 
 import '../../src/browser/preview/style/index.css';
 
@@ -36,6 +38,8 @@ export default new ContainerModule(bind => {
     bind(VariableContribution).to(ProjectPathVariableContribution).inSingletonScope();
 
     bind(MachinePicker).toSelf().inSingletonScope();
+
+    bind(CheApiEndPointProvider).to(CheApiExternalEndPointProvider).inSingletonScope();
 
     bind(CheTaskProvider).toSelf().inSingletonScope();
     bind(CheTaskResolver).toSelf().inSingletonScope();

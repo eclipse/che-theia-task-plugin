@@ -11,6 +11,7 @@
 import { injectable, postConstruct, inject } from 'inversify';
 import WorkspaceClient, { IRemoteAPI, IWorkspace, IServer, IRestAPIConfig, IMachine, ICommand } from '@eclipse-che/workspace-client';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables/env-variables-protocol';
+import { CheApiEndPointProvider } from './che-api-endpoint-provider';
 
 @injectable()
 export class CheWorkspaceClient {
@@ -20,11 +21,15 @@ export class CheWorkspaceClient {
     @inject(EnvVariablesServer)
     protected readonly envVariablesServer: EnvVariablesServer;
 
+    @inject(CheApiEndPointProvider)
+    protected readonly cheApiEndPointProvider: CheApiEndPointProvider;
+
     @postConstruct()
     protected async init() {
-        const cheApiEndpoint = await this.getCheApiEndPoint();
+        const cheApiEndpoint = await this.cheApiEndPointProvider.getCheApiEndPoint();
+
         if (!cheApiEndpoint) {
-            throw new Error('Environment variable CHE_API_EXTERNAL is not set.');
+            throw new Error(`Environment variable ${this.cheApiEndPointProvider.getCheApiEndPointEnvVariableName()} is not set.`);
         }
 
         const restAPIConfig: IRestAPIConfig = {
@@ -82,11 +87,6 @@ export class CheWorkspaceClient {
             throw new Error('Environment variable CHE_WORKSPACE_ID is not set.');
         }
         return await this.restApiClient.getById<IWorkspace>(workspaceId);
-    }
-
-    async getCheApiEndPoint(): Promise<string | undefined> {
-        return this.getEnvVarValue('CHE_API_EXTERNAL');
-
     }
 
     async getWorkspaceId(): Promise<string | undefined> {
