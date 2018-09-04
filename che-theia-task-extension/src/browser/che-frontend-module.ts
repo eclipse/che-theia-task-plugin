@@ -28,10 +28,13 @@ import { ProjectPathVariableContribution } from './variable/che-task-variables-c
 import { CheWorkspaceClient } from '../common/che-workspace-client';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
 import { CheApiExternalEndPointProvider } from './che-api-external-endpoint-provider';
+import { bindCheTaskPreferences } from './task-preferences';
 
 import '../../src/browser/preview/style/index.css';
 
 export default new ContainerModule(bind => {
+    bindCheTaskPreferences(bind);
+
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
 
     bind(VariableContribution).to(ServerVariablesContribution).inSingletonScope();
