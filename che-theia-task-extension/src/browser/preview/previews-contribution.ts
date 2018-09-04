@@ -9,7 +9,7 @@
  **********************************************************************/
 
 import { injectable, inject } from 'inversify';
-import { MessageService } from '@theia/core';
+import { MessageService, DisposableCollection, Disposable } from '@theia/core';
 import { AbstractViewContribution, FrontendApplicationContribution, FrontendApplication, StatusBar, StatusBarAlignment } from '@theia/core/lib/browser';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskWatcher, TaskInfo } from '@theia/task/lib/common';
@@ -24,6 +24,8 @@ export const GO_TO_ACTION = 'Go to';
 /** Contributes a functionality to work with the preview URLs. */
 @injectable()
 export class PreviewsContribution extends AbstractViewContribution<PreviewsWidget> implements FrontendApplicationContribution {
+
+    protected static readonly STATUS_BAR_ELEMENT_ID: string = 'che-previews';
 
     @inject(StatusBar)
     protected readonly statusBar: StatusBar;
@@ -43,6 +45,8 @@ export class PreviewsContribution extends AbstractViewContribution<PreviewsWidge
     @inject(PreviewUrlService)
     protected readonly previewService: PreviewUrlService;
 
+    protected readonly toDispose = new DisposableCollection();
+
     constructor() {
         super({
             widgetId: PREVIEWS_WIDGET_FACTORY_ID,
@@ -54,23 +58,30 @@ export class PreviewsContribution extends AbstractViewContribution<PreviewsWidge
         });
     }
 
-    onStart(app: FrontendApplication) {
+    onStart(app: FrontendApplication): void {
         this.setStatusBarElement();
         this.startWatchingTasks();
     }
 
-    protected setStatusBarElement() {
-        this.statusBar.setElement('che-previews', {
+    onStop(app: FrontendApplication): void {
+        this.toDispose.dispose();
+    }
+
+    protected setStatusBarElement(): void {
+        this.statusBar.setElement(PreviewsContribution.STATUS_BAR_ELEMENT_ID, {
             text: '$(link) Previews',
             tooltip: 'Show Preview URLs',
             alignment: StatusBarAlignment.LEFT,
             command: this.toggleCommand ? this.toggleCommand.id : undefined
         });
+        this.toDispose.push(Disposable.create(() => this.statusBar.removeElement(PreviewsContribution.STATUS_BAR_ELEMENT_ID)));
     }
 
     protected async startWatchingTasks(): Promise<void> {
-        this.taskWatcher.onTaskCreated(event => this.onTaskCreated(event));
-        this.taskWatcher.onTaskExit(() => this.previewsWidget.refresh());
+        this.toDispose.pushAll([
+            this.taskWatcher.onTaskCreated(event => this.onTaskCreated(event)),
+            this.taskWatcher.onTaskExit(() => this.previewsWidget.refresh())
+        ]);
     }
 
     protected onTaskCreated = async (event: TaskInfo) => {
