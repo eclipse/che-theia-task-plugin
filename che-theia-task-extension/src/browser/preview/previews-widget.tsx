@@ -13,28 +13,26 @@ import { Message } from '@phosphor/messaging';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskService } from '@theia/task/lib/browser';
-import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
+import { PREVIEW_ACTION, GO_TO_ACTION } from './previews-contribution';
 import { PreviewUrlService } from './preview-url-service';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../../common/task-protocol';
 import * as React from 'react';
 
-/** Displays the preview URLs for all running Che tasks. */
+/** Displays the preview URLs of all running Che tasks. */
 @injectable()
 export class PreviewsWidget extends ReactWidget {
 
     @inject(TaskService)
     protected readonly taskService: TaskService;
 
-    @inject(VariableResolverService)
-    protected readonly variableResolverService: VariableResolverService;
-
     @inject(WindowService)
     protected readonly windowService: WindowService;
 
     @inject(PreviewUrlService)
-    protected readonly previewUrlService: PreviewUrlService;
+    protected readonly previewService: PreviewUrlService;
 
-    protected readonly urls: { link: string, label: string }[];
+    // protected urls: { link: string, label: string }[] = [];
+    protected tasks: CheTaskConfiguration[] = [];
 
     constructor() {
         super();
@@ -43,12 +41,17 @@ export class PreviewsWidget extends ReactWidget {
         this.title.label = 'Preview URLs';
         this.title.iconClass = 'fa fa-link';
         this.title.closable = true;
-        this.urls = [];
     }
 
     @postConstruct()
     protected init(): void {
-        this.fetchUrls().then(() => this.update());
+        this.refresh();
+    }
+
+    /** Refresh the widget. */
+    async refresh(): Promise<void> {
+        await this.fetchURLs();
+        this.update();
     }
 
     // TODO: Widget was activated, but did not accept focus: previewUrls
@@ -58,10 +61,14 @@ export class PreviewsWidget extends ReactWidget {
         this.update();
     }
 
-    protected async fetchUrls(): Promise<void> {
+    protected async fetchURLs(): Promise<void> {
+        // this.urls = [];
+        this.tasks = [];
         for (const task of await this.getCheTasks()) {
-            const resolvedURL = await this.variableResolverService.resolve(task.previewUrl!);
-            this.urls.push({ link: resolvedURL, label: task.label });
+            if (task.previewUrl) {
+                // this.urls.push({ link: task.previewUrl, label: task.label });
+                this.tasks.push(task);
+            }
         }
     }
 
@@ -79,7 +86,14 @@ export class PreviewsWidget extends ReactWidget {
     }
 
     protected render(): React.ReactNode {
+        if (this.tasks.length === 0) {
+            return <React.Fragment>{this.renderPlaceholder()}</React.Fragment>;
+        }
         return <React.Fragment>{this.renderPreviewsContents()}</React.Fragment>;
+    }
+
+    protected renderPlaceholder(): React.ReactNode {
+        return <div className='container placeholder'>No Che tasks with a preview URL are running</div>;
     }
 
     protected renderPreviewsContents(): React.ReactNode {
@@ -87,17 +101,16 @@ export class PreviewsWidget extends ReactWidget {
     }
 
     protected renderURLs(): React.ReactNode[] {
-        return this.urls.map((url, idx) =>
-            <div key={url.label + idx} className='url-container'>
-                <span key='link' className='link'>{url.link}</span>
-                <span key='label' className='label'>{url.label}</span>
+        return this.tasks.map((task, idx) =>
+            <div key={task.label + idx} className='url-container'>
+                <span key='link' className='link'>{task.previewUrl!}</span>
+                <span key='label' className='label'>{task.label}</span>
                 <div key='actions' className='buttons-container'>
-                    <button key='preview-url' className='theia-button' onClick={event => this.urlClickInternal(url.link, url.label)}>Preview</button>
-                    <button key='goto-url' className='theia-button' onClick={event => this.urlClickExternal(url.link)}>Go to URL</button>
+                    <button key='preview-url' className='theia-button'
+                        onClick={event => this.previewService.preview(task)}>{PREVIEW_ACTION}</button>
+                    <button key='goto-url' className='theia-button'
+                        onClick={event => this.previewService.preview(task, true)}>{GO_TO_ACTION}</button>
                 </div>
             </div>);
     }
-
-    protected urlClickInternal = (url: string, label: string) => this.previewUrlService.open(url, label);
-    protected urlClickExternal = (url: string) => this.windowService.openNewWindow(url);
 }
