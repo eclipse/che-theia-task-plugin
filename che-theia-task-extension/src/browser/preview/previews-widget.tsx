@@ -31,7 +31,6 @@ export class PreviewsWidget extends ReactWidget {
     @inject(PreviewUrlService)
     protected readonly previewService: PreviewUrlService;
 
-    // protected urls: { link: string, label: string }[] = [];
     protected tasks: CheTaskConfiguration[] = [];
 
     constructor() {
@@ -62,11 +61,9 @@ export class PreviewsWidget extends ReactWidget {
     }
 
     protected async fetchURLs(): Promise<void> {
-        // this.urls = [];
         this.tasks = [];
         for (const task of await this.getCheTasks()) {
             if (task.previewUrl) {
-                // this.urls.push({ link: task.previewUrl, label: task.label });
                 this.tasks.push(task);
             }
         }
@@ -105,12 +102,16 @@ export class PreviewsWidget extends ReactWidget {
             <div key={task.label + idx} className='url-container'>
                 <span key='link' className='link'>{task.previewUrl!}</span>
                 <span key='label' className='label'>{task.label}</span>
-                <div key='actions' className='buttons-container'>
-                    <button key='preview-url' className='theia-button'
-                        onClick={event => this.previewService.preview(task)}>{PREVIEW_ACTION}</button>
-                    <button key='goto-url' className='theia-button'
-                        onClick={event => this.previewService.preview(task, true)}>{GO_TO_ACTION}</button>
+                <div key='actions' className='actions-container'>
+                    {this.renderActions(task)}
                 </div>
             </div>);
+    }
+
+    protected renderActions(task: CheTaskConfiguration): React.ReactNode[] {
+        return [
+            <button key='preview-url' className='theia-button' onClick={() => this.previewService.preview(task)}>{PREVIEW_ACTION}</button>,
+            <button key='goto-url' className='theia-button' onClick={() => this.previewService.preview(task, true)}>{GO_TO_ACTION}</button>
+        ];
     }
 }

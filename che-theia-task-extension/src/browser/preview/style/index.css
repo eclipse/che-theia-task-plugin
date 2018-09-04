@@ -43,7 +43,7 @@
     color: var(--theia-ui-font-color2);
 }
 
-.preview-urls .buttons-container {
+.preview-urls .actions-container {
     margin-right: var(--theia-ui-padding);
     display: flex;
     flex: 1;
