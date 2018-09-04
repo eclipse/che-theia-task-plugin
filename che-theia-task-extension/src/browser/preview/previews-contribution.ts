@@ -15,6 +15,7 @@ import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskWatcher, TaskInfo } from '@theia/task/lib/common';
 import { PreviewUrlService } from './preview-url-service';
 import { PreviewsWidget } from './previews-widget';
+import { CheTaskPreferences } from '../task-preferences';
 import { CHE_TASK_TYPE, CheTaskConfiguration } from '../../common/task-protocol';
 
 export const PREVIEWS_WIDGET_FACTORY_ID = 'previewUrlsView';
@@ -44,6 +45,9 @@ export class PreviewsContribution extends AbstractViewContribution<PreviewsWidge
 
     @inject(PreviewUrlService)
     protected readonly previewService: PreviewUrlService;
+
+    @inject(CheTaskPreferences)
+    protected readonly taskPreferences: CheTaskPreferences;
 
     protected readonly toDispose = new DisposableCollection();
 
@@ -85,10 +89,12 @@ export class PreviewsContribution extends AbstractViewContribution<PreviewsWidge
     }
 
     protected onTaskCreated = async (event: TaskInfo) => {
-        if (event.config.type !== CHE_TASK_TYPE) {
+        this.previewsWidget.refresh();
+        const notify = this.taskPreferences['che.task.previewurl.notifications.show'];
+        if (!notify || event.config.type !== CHE_TASK_TYPE) {
             return;
         }
-        this.previewsWidget.refresh();
+
         const cheTask = event.config as CheTaskConfiguration;
         const previewURL = cheTask.previewUrl;
         if (previewURL) {
