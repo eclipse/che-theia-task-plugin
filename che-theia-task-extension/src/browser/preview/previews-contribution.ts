@@ -20,7 +20,7 @@ import { CHE_TASK_TYPE, CheTaskConfiguration } from '../../common/task-protocol'
 
 export const PREVIEWS_WIDGET_FACTORY_ID = 'previewUrlsView';
 export const PREVIEW_ACTION = 'Preview';
-export const GO_TO_ACTION = 'Go to';
+export const GO_TO_ACTION = 'Go To';
 
 /** Contributes a functionality to work with the preview URLs. */
 @injectable()
@@ -98,7 +98,7 @@ export class PreviewsContribution extends AbstractViewContribution<PreviewsWidge
         const cheTask = event.config as CheTaskConfiguration;
         const previewURL = cheTask.previewUrl;
         if (previewURL) {
-            const answer = await this.messageService.info(`Task ${cheTask.label} is running with preview URL ${previewURL}`, PREVIEW_ACTION, GO_TO_ACTION);
+            const answer = await this.messageService.info(`Task '${cheTask.label}' launched a service on ${previewURL}`, PREVIEW_ACTION, GO_TO_ACTION);
             if (answer) {
                 this.previewService.preview(cheTask, answer === GO_TO_ACTION);
             }
