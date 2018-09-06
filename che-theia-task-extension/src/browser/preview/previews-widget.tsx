@@ -13,10 +13,13 @@ import { Message } from '@phosphor/messaging';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskService } from '@theia/task/lib/browser';
-import { PREVIEW_ACTION, GO_TO_ACTION } from './previews-contribution';
 import { PreviewUrlService } from './preview-url-service';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../../common/task-protocol';
 import * as React from 'react';
+
+export const PREVIEWS_WIDGET_FACTORY_ID = 'previewUrlsView';
+export const PREVIEW_ACTION = 'Preview';
+export const GO_TO_ACTION = 'Go To';
 
 /** Displays the preview URLs of all running Che tasks. */
 @injectable()

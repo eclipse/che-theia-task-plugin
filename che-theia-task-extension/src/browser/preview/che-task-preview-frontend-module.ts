@@ -10,9 +10,9 @@
 
 import { interfaces } from 'inversify';
 import { WidgetFactory, FrontendApplicationContribution, bindViewContribution } from '@theia/core/lib/browser';
-import { PREVIEWS_WIDGET_FACTORY_ID, PreviewsContribution } from './previews-contribution';
+import { PreviewsContribution } from './previews-contribution';
 import { PreviewUrlService } from './preview-url-service';
-import { PreviewsWidget } from './previews-widget';
+import { PreviewsWidget, PREVIEWS_WIDGET_FACTORY_ID } from './previews-widget';
 
 import '../../../src/browser/preview/style/index.css';
 

@@ -14,13 +14,9 @@ import { AbstractViewContribution, FrontendApplicationContribution, FrontendAppl
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
 import { TaskWatcher, TaskInfo } from '@theia/task/lib/common';
 import { PreviewUrlService } from './preview-url-service';
-import { PreviewsWidget } from './previews-widget';
+import { PreviewsWidget, GO_TO_ACTION, PREVIEW_ACTION, PREVIEWS_WIDGET_FACTORY_ID } from './previews-widget';
 import { CheTaskPreferences } from '../task-preferences';
 import { CHE_TASK_TYPE, CheTaskConfiguration } from '../../common/task-protocol';
-
-export const PREVIEWS_WIDGET_FACTORY_ID = 'previewUrlsView';
-export const PREVIEW_ACTION = 'Preview';
-export const GO_TO_ACTION = 'Go To';
 
 /** Contributes a functionality to work with the preview URLs. */
 @injectable()
