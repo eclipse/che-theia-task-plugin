@@ -38,8 +38,10 @@ export class PreviewsWidget extends ReactWidget {
         this.id = 'previewUrls';
         this.addClass('preview-urls');
         this.title.label = 'Preview URLs';
+        this.title.caption = 'Shows the URLs of the services launched by the tasks';
         this.title.iconClass = 'fa fa-link';
         this.title.closable = true;
+        this.node.tabIndex = 0;
     }
 
     @postConstruct()
@@ -53,11 +55,9 @@ export class PreviewsWidget extends ReactWidget {
         this.update();
     }
 
-    // TODO: Widget was activated, but did not accept focus: previewUrls
     protected onActivateRequest(msg: Message): void {
         super.onActivateRequest(msg);
         this.node.focus();
-        this.update();
     }
 
     protected async fetchURLs(): Promise<void> {

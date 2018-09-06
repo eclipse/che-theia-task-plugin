@@ -21,7 +21,7 @@ export function bindPreviewModule(bind: interfaces.Bind) {
     bindViewContribution(bind, PreviewsContribution);
     bind(FrontendApplicationContribution).toService(PreviewsContribution);
 
-    bind(PreviewsWidget).toSelf().inSingletonScope();
+    bind(PreviewsWidget).toSelf().inTransientScope();
     bind(WidgetFactory).toDynamicValue(ctx => ({
         id: PREVIEWS_WIDGET_FACTORY_ID,
         createWidget: () => ctx.container.get(PreviewsWidget)
