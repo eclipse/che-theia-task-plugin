@@ -20,16 +20,22 @@ import {
 export const CheTaskConfigSchema: PreferenceSchema = {
     'type': 'object',
     'properties': {
-        'che.task.previewurl.notifications.show': {
-            'type': 'boolean',
-            'description': 'Show the notifications suggest to open a task preview URL.',
-            'default': true
+        'che.task.preview.notifications': {
+            'type': 'string',
+            'enum': [
+                'on',
+                'alwaysPreview',
+                'alwaysGoTo',
+                'off'
+            ],
+            'default': 'on',
+            'description': "Enable/disable the notifications with a proposal to open a Che task's preview URL. Can be: 'on', 'alwaysPreview', 'alwaysGoTo' or 'off'."
         }
     }
 };
 
 export interface CheTaskConfiguration {
-    'che.task.previewurl.notifications.show': boolean
+    'che.task.preview.notifications': 'on' | 'alwaysPreview' | 'alwaysGoTo' | 'off'
 }
 
 export const CheTaskPreferences = Symbol('CheTaskPreferences');
@@ -44,6 +50,5 @@ export function bindCheTaskPreferences(bind: interfaces.Bind): void {
         const preferences = ctx.container.get<PreferenceService>(PreferenceService);
         return createCheTaskPreferences(preferences);
     });
-
     bind(PreferenceContribution).toConstantValue({ schema: CheTaskConfigSchema });
 }

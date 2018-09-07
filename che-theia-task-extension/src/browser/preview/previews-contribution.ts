@@ -86,17 +86,23 @@ export class PreviewsContribution extends AbstractViewContribution<PreviewsWidge
 
     protected onTaskCreated = async (event: TaskInfo) => {
         this.previewsWidget.refresh();
-        const notify = this.taskPreferences['che.task.previewurl.notifications.show'];
-        if (!notify || event.config.type !== CHE_TASK_TYPE) {
+        const notify = this.taskPreferences['che.task.preview.notifications'];
+        if (notify === 'off' || event.config.type !== CHE_TASK_TYPE) {
             return;
         }
 
         const cheTask = event.config as CheTaskConfiguration;
-        const previewURL = cheTask.previewUrl;
-        if (previewURL) {
-            const answer = await this.messageService.info(`Task '${cheTask.label}' launched a service on ${previewURL}`, PREVIEW_ACTION, GO_TO_ACTION);
-            if (answer) {
-                this.previewService.preview(cheTask, answer === GO_TO_ACTION);
+        if (notify === 'alwaysGoTo') {
+            this.previewService.preview(cheTask, true);
+        } else if (notify === 'alwaysPreview') {
+            this.previewService.preview(cheTask);
+        } else {
+            const previewURL = cheTask.previewUrl;
+            if (previewURL) {
+                const answer = await this.messageService.info(`Task '${cheTask.label}' launched a service on ${previewURL}`, PREVIEW_ACTION, GO_TO_ACTION);
+                if (answer) {
+                    this.previewService.preview(cheTask, answer === GO_TO_ACTION);
+                }
             }
         }
     }
