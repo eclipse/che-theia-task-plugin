@@ -11,10 +11,8 @@
 import { injectable, inject, postConstruct } from 'inversify';
 import { Message } from '@phosphor/messaging';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
-import { WindowService } from '@theia/core/lib/browser/window/window-service';
-import { TaskService } from '@theia/task/lib/browser';
-import { PreviewUrlService } from './preview-url-service';
-import { CheTaskConfiguration, CHE_TASK_TYPE } from '../../common/task-protocol';
+import { PreviewsWidgetModel } from './previews-widget-model';
+import { CheTaskConfiguration } from '../../common/task-protocol';
 import * as React from 'react';
 
 export const PREVIEWS_WIDGET_FACTORY_ID = 'previewUrlsView';
@@ -25,16 +23,8 @@ export const GO_TO_ACTION = 'Go To';
 @injectable()
 export class PreviewsWidget extends ReactWidget {
 
-    @inject(TaskService)
-    protected readonly taskService: TaskService;
-
-    @inject(WindowService)
-    protected readonly windowService: WindowService;
-
-    @inject(PreviewUrlService)
-    protected readonly previewService: PreviewUrlService;
-
-    protected tasks: CheTaskConfiguration[] = [];
+    @inject(PreviewsWidgetModel)
+    protected readonly model: PreviewsWidgetModel;
 
     constructor() {
         super();
@@ -49,13 +39,8 @@ export class PreviewsWidget extends ReactWidget {
 
     @postConstruct()
     protected init(): void {
-        this.refresh();
-    }
-
-    /** Refresh the widget. */
-    async refresh(): Promise<void> {
-        await this.fetchURLs();
         this.update();
+        this.model.onChanged(() => this.update());
     }
 
     protected onActivateRequest(msg: Message): void {
@@ -63,30 +48,9 @@ export class PreviewsWidget extends ReactWidget {
         this.node.focus();
     }
 
-    protected async fetchURLs(): Promise<void> {
-        this.tasks = [];
-        for (const task of await this.getCheTasks()) {
-            if (task.previewUrl) {
-                this.tasks.push(task);
-            }
-        }
-    }
-
-    /** Returns the configurations for Che tasks with a preview URL defined. */
-    protected async getCheTasks(): Promise<CheTaskConfiguration[]> {
-        const cheTasks: CheTaskConfiguration[] = [];
-        const runningTasks = await this.taskService.getRunningTasks();
-        runningTasks.filter(t => t.config.type === CHE_TASK_TYPE).forEach(cheTask => {
-            const cheTaskConfig = cheTask.config as CheTaskConfiguration;
-            if (cheTaskConfig.previewUrl) {
-                cheTasks.push(cheTaskConfig);
-            }
-        });
-        return cheTasks;
-    }
-
     protected render(): React.ReactNode {
-        if (this.tasks.length === 0) {
+        const tasks = this.model.getTasks();
+        if (tasks.length === 0) {
             return <React.Fragment>{this.renderPlaceholder()}</React.Fragment>;
         }
         return <React.Fragment>{this.renderPreviewsContents()}</React.Fragment>;
@@ -101,7 +65,7 @@ export class PreviewsWidget extends ReactWidget {
     }
 
     protected renderURLs(): React.ReactNode[] {
-        return this.tasks.map((task, idx) =>
+        return this.model.getTasks().map((task, idx) =>
             <div key={task.label + idx} className='url-container'>
                 <span key='link' className='link'>{task.previewUrl!}</span>
                 <span key='label' className='label'>{task.label}</span>
@@ -113,8 +77,8 @@ export class PreviewsWidget extends ReactWidget {
 
     protected renderActions(task: CheTaskConfiguration): React.ReactNode[] {
         return [
-            <button key='preview-url' className='theia-button' onClick={() => this.previewService.preview(task)}>{PREVIEW_ACTION}</button>,
-            <button key='goto-url' className='theia-button' onClick={() => this.previewService.preview(task, true)}>{GO_TO_ACTION}</button>
+            <button key='preview-url' className='theia-button' onClick={() => this.model.previewURL(task)}>{PREVIEW_ACTION}</button>,
+            <button key='goto-url' className='theia-button' onClick={() => this.model.goToURL(task)}>{GO_TO_ACTION}</button>
         ];
     }
 }

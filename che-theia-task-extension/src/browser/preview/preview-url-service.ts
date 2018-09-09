@@ -15,7 +15,6 @@ import { MiniBrowser, MiniBrowserProps } from '@theia/mini-browser/lib/browser/m
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
 import { CheTaskConfiguration } from '../../common/task-protocol';
 
-/** Allows to open a Che task preview URL. */
 @injectable()
 export class PreviewUrlService {
 
@@ -41,11 +40,10 @@ export class PreviewUrlService {
         if (!previewURL) {
             return;
         }
-        const resolvedURL = await this.varResolver.resolve(previewURL);
         if (externally) {
-            this.previewExternally(resolvedURL);
+            this.previewExternally(previewURL);
         } else {
-            this.previewInternally(resolvedURL, task.label);
+            this.previewInternally(previewURL, task.label);
         }
     }
 

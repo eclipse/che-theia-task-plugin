@@ -13,6 +13,8 @@ import { WidgetFactory, FrontendApplicationContribution, bindViewContribution } 
 import { PreviewsContribution } from './previews-contribution';
 import { PreviewUrlService } from './preview-url-service';
 import { PreviewsWidget, PREVIEWS_WIDGET_FACTORY_ID } from './previews-widget';
+import { PreviewsWidgetModel } from './previews-widget-model';
+import { PreviewUrlNotification } from './preview-url-notification';
 
 import '../../../src/browser/preview/style/index.css';
 
@@ -21,6 +23,7 @@ export function bindPreviewModule(bind: interfaces.Bind) {
     bindViewContribution(bind, PreviewsContribution);
     bind(FrontendApplicationContribution).toService(PreviewsContribution);
 
+    bind(PreviewsWidgetModel).toSelf().inTransientScope();
     bind(PreviewsWidget).toSelf().inTransientScope();
     bind(WidgetFactory).toDynamicValue(ctx => ({
         id: PREVIEWS_WIDGET_FACTORY_ID,
@@ -28,4 +31,7 @@ export function bindPreviewModule(bind: interfaces.Bind) {
     }));
 
     bind(PreviewUrlService).toSelf().inSingletonScope();
+
+    bind(PreviewUrlNotification).toSelf().inSingletonScope();
+    bind(FrontendApplicationContribution).toService(PreviewUrlNotification);
 }
