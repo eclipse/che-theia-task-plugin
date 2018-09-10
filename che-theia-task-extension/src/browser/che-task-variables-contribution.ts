@@ -47,11 +47,13 @@ export class ProjectPathVariableContribution implements VariableContribution {
                 }
                 const selectionUri = selection[0]!.fileStat!.uri;
 
-                const wsRoot = await this.workspaceService.root;
-                const currentRoot = Array.isArray(wsRoot) ? (<Array<FileStat>>wsRoot).find((root: FileStat) => {
+                // WIP workspace folder is roots[0] https://github.com/theia-ide/theia/commit/80f402c621fe197130eae7abd22a0d89008b4ef1
+                // Beware, workspace folder concept will diseappear in the next PR.
+                const wsRoot = await this.workspaceService.roots;
+                const currentRoot = wsRoot.find((root: FileStat) => {
                     // if multi-root
                     return selectionUri.startsWith(root.uri);
-                }) : <FileStat>wsRoot;
+                });
                 if (!currentRoot || !currentRoot.uri) {
                     errorMessage += 'Get current workspace root URI error.';
                     await this.messageService.error(errorMessage);

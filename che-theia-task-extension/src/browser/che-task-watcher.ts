@@ -32,13 +32,12 @@ export class CheTaskWatcher implements FrontendApplicationContribution {
     @inject(WorkspaceService)
     protected readonly workspaceService: WorkspaceService;
 
-    onStart(): void {
+    async onStart() {
         // wait for the workspace root to be set
-        this.workspaceService.root.then(async root => {
-            if (root) {
-                this.workspaceRootUri = root.uri;
-            }
-        });
+        const wsRoot = await this.workspaceService.roots;
+        // WIP workspace folder is roots[0] https://github.com/theia-ide/theia/commit/80f402c621fe197130eae7abd22a0d89008b4ef1
+        // Beware, workspace folder concept will diseappear in the next PR.
+        this.workspaceRootUri = wsRoot[0].uri;
 
         this.taskWatcher.onTaskCreated((event: TaskInfo) => {
             if (this.isEventForThisClient(event.ctx)) {
