@@ -10,7 +10,6 @@
 
 import { ContainerModule, Container } from 'inversify';
 import { WidgetFactory, FrontendApplicationContribution } from '@theia/core/lib/browser';
-import { CommandContribution } from '@theia/core/lib/common/command';
 import { TaskContribution } from '@theia/task/lib/browser';
 import { TerminalWidgetOptions } from '@theia/terminal/lib/browser/base/terminal-widget';
 import { VariableContribution } from '@theia/variable-resolver/lib/browser';
@@ -21,15 +20,18 @@ import { CheTaskResolver } from './che-task-resolver';
 import { CheTaskWatcher } from './che-task-watcher';
 import { CHE_TERMINAL_WIDGET_FACTORY_ID, CheTerminalWidget, CheTerminalWidgetOptions } from './che-terminal-widget';
 import { MachinePicker } from './machine-picker';
-import { PreviewUrlIndicator } from './preview-url-indicator';
-import { PreviewUrlQuickOpen } from './preview-url-quick-open';
-import { ServerVariablesContribution } from './server-variables-contribution';
+import { ServerVariablesContribution } from './variable/server-variables-contribution';
+import { ProjectPathVariableContribution } from './variable/che-task-variables-contribution';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
-import { ProjectPathVariableContribution } from './che-task-variables-contribution';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
 import { CheApiExternalEndPointProvider } from './che-api-external-endpoint-provider';
+import { bindPreviewModule } from './preview/che-task-preview-frontend-module';
+import { bindCheTaskPreferences } from './task-preferences';
 
 export default new ContainerModule(bind => {
+    bindCheTaskPreferences(bind);
+    bindPreviewModule(bind);
+
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
 
     bind(VariableContribution).to(ServerVariablesContribution).inSingletonScope();
@@ -43,11 +45,6 @@ export default new ContainerModule(bind => {
     bind(CheTaskResolver).toSelf().inSingletonScope();
     bind(CheTaskContribution).toSelf().inSingletonScope();
     bind(TaskContribution).toService(CheTaskContribution);
-
-    bind(PreviewUrlQuickOpen).toSelf().inSingletonScope();
-    bind(PreviewUrlIndicator).toSelf().inSingletonScope();
-    bind(FrontendApplicationContribution).toService(PreviewUrlIndicator);
-    bind(CommandContribution).toService(PreviewUrlIndicator);
 
     bind(CheTaskWatcher).toSelf().inSingletonScope();
     bind(FrontendApplicationContribution).toService(CheTaskWatcher);

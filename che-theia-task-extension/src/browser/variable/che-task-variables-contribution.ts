@@ -10,7 +10,7 @@
 
 import {inject, injectable} from 'inversify';
 import {VariableContribution, VariableRegistry} from '@theia/variable-resolver/lib/browser';
-import {CheWorkspaceClient} from '../common/che-workspace-client';
+import {CheWorkspaceClient} from '../../common/che-workspace-client';
 import {WorkspaceService} from '@theia/workspace/lib/browser/workspace-service';
 import {SelectionService} from '@theia/core/lib/common';
 import {FileStat} from '@theia/filesystem/lib/common/filesystem';
