@@ -11,7 +11,7 @@
 import { inject, injectable } from 'inversify';
 import { WidgetManager, ApplicationShell } from '@theia/core/lib/browser';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
-import { MiniBrowserProps } from '@theia/mini-browser/lib/browser/mini-browser';
+import { MiniBrowserProps, MiniBrowser } from '@theia/mini-browser/lib/browser/mini-browser';
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
 import { CheTaskConfiguration } from '../../common/task-protocol';
 
@@ -66,7 +66,7 @@ export class PreviewUrlOpenService {
     protected async previewInternally(previewURL: string, label: string): Promise<void> {
         const url = await this.varResolver.resolve(previewURL);
         const widget = await this.widgetManager.getOrCreateWidget(
-            'mini-browser-factory',
+            MiniBrowser.Factory.ID,
             <MiniBrowserProps>{
                 startPage: url,
                 name: `Preview - ${label}`
