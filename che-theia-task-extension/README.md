@@ -36,6 +36,7 @@ The variables substitution is supported for the `command` and `previewUrl` field
 
 The environment variables have to be set:
 - `CHE_API_EXTERNAL`
+- `CHE_API_INTERNAL`
 - `CHE_WORKSPACE_ID`
 
 The following mount should be set in the `che.env` file: `CHE_WORKSPACE_VOLUME=/var/run/docker.sock:/var/run/docker.sock;`
