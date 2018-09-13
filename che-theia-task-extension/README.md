@@ -3,12 +3,15 @@
 The extension allows to work with the Che commands as with the Theia Tasks.
 
 Contributes:
-- Che task runner
-- Che task resolver
-- Che task provider
-
-Adds the following commands (shortcut `F1`):
-- Previews
+- Che task runner that runs the Che commands as the Theia tasks;
+- Che task resolver that fills the missed mandatory parameters in a task;
+- Che task provider that provides the Che workspace's commands as provided Theia tasks;
+- `Preview URLs` view;
+- `che.task.preview.notifications` preference to set the preferred way of previewing a service URL:
+  - `on` value enables a notification to ask a user how a URL should be opened
+  - `alwaysPreview` value tells Theia to open a preview URL automatically inside Theia as soon as a task is running
+  - `alwaysGoTo` value tells Theia to open a preview URL automatically in a separate browser's tab as soon as a task is running
+  - `off` value disables opening a preview URL (automatically and with a notification)
 
 The extension provides the `CheTaskService` allows to run a Che task by it's name.
 
@@ -29,7 +32,7 @@ The variables substitution is supported for the `command` and `previewUrl` field
 
 ## Requirements
 
-**Note,** currently che-theia-task-extension works with the Che workspaces run on Docker only since it completelly relies on the [machine-exec server](https://github.com/eclipse/che-theia-terminal-plugin/tree/master/machine-exec-server) which temporary has it's limitation.
+**Note,** currently che-theia-task-extension works with the Che workspaces run on Docker only since it completely relies on the [machine-exec server](https://github.com/eclipse/che-theia-terminal-plugin/tree/master/machine-exec-server) which temporary has it's limitation.
 
 The environment variables have to be set:
 - `CHE_API_EXTERNAL`

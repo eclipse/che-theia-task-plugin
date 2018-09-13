@@ -16,8 +16,6 @@ import { CheTaskConfiguration } from '../../common/task-protocol';
 import * as React from 'react';
 
 export const PREVIEWS_WIDGET_FACTORY_ID = 'previewUrlsView';
-export const PREVIEW_ACTION = 'Preview';
-export const GO_TO_ACTION = 'Go To';
 
 /** Displays the preview URLs of all running Che tasks. */
 @injectable()
@@ -77,8 +75,8 @@ export class PreviewsWidget extends ReactWidget {
 
     protected renderActions(task: CheTaskConfiguration): React.ReactNode[] {
         return [
-            <button key='preview-url' className='theia-button' onClick={() => this.model.previewURL(task)}>{PREVIEW_ACTION}</button>,
-            <button key='goto-url' className='theia-button' onClick={() => this.model.goToURL(task)}>{GO_TO_ACTION}</button>
+            <button key='preview-url' className='theia-button' onClick={() => this.model.previewURL(task)}>Preview</button>,
+            <button key='goto-url' className='theia-button' onClick={() => this.model.goToURL(task)}>Go To</button>
         ];
     }
 }

@@ -13,13 +13,15 @@ import { MessageService } from '@theia/core';
 import { FrontendApplicationContribution } from '@theia/core/lib/browser';
 import { TaskWatcher, TaskInfo } from '@theia/task/lib/common';
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
-import { PREVIEW_ACTION, GO_TO_ACTION } from './previews-widget';
-import { PreviewUrlService } from './preview-url-service';
+import { PreviewUrlOpenService } from './preview-url-open-service';
 import { CheTaskPreferences } from '../task-preferences';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../../common/task-protocol';
 
+const PREVIEW_ACTION = 'Preview';
+const GO_TO_ACTION = 'Go To';
+
 @injectable()
-export class PreviewUrlNotification implements FrontendApplicationContribution {
+export class PreviewUrlWatcher implements FrontendApplicationContribution {
 
     @inject(TaskWatcher)
     protected readonly taskWatcher: TaskWatcher;
@@ -27,8 +29,8 @@ export class PreviewUrlNotification implements FrontendApplicationContribution {
     @inject(CheTaskPreferences)
     protected readonly taskPreferences: CheTaskPreferences;
 
-    @inject(PreviewUrlService)
-    protected readonly previewService: PreviewUrlService;
+    @inject(PreviewUrlOpenService)
+    protected readonly previewService: PreviewUrlOpenService;
 
     @inject(MessageService)
     protected readonly messageService: MessageService;
@@ -41,22 +43,27 @@ export class PreviewUrlNotification implements FrontendApplicationContribution {
     }
 
     protected onTaskCreated = async (event: TaskInfo) => {
-        const notify = this.taskPreferences['che.task.preview.notifications'];
-        if (event.config.type !== CHE_TASK_TYPE || !event.config.previewUrl || notify === 'off') {
+        const mode = this.taskPreferences['che.task.preview.notifications'];
+        if (event.config.type !== CHE_TASK_TYPE || !event.config.previewUrl || mode === 'off') {
             return;
         }
 
         const cheTask = event.config as CheTaskConfiguration;
-        if (notify === 'alwaysGoTo') {
+        if (mode === 'alwaysGoTo') {
             this.previewService.preview(cheTask, true);
-        } else if (notify === 'alwaysPreview') {
+        } else if (mode === 'alwaysPreview') {
             this.previewService.preview(cheTask);
         } else {
-            const resolvedURL = await this.resolver.resolve(cheTask.previewUrl!);
-            const answer = await this.messageService.info(`Task '${cheTask.label}' launched a service on ${resolvedURL}`, PREVIEW_ACTION, GO_TO_ACTION);
-            if (answer) {
-                this.previewService.preview(cheTask, answer === GO_TO_ACTION);
-            }
+            this.askUser(cheTask);
+        }
+    }
+
+    /** Ask a user how the preview URL should be opened. */
+    protected async askUser(cheTask: CheTaskConfiguration): Promise<void> {
+        const resolvedURL = await this.resolver.resolve(cheTask.previewUrl!);
+        const answer = await this.messageService.info(`Task '${cheTask.label}' launched a service on ${resolvedURL}`, PREVIEW_ACTION, GO_TO_ACTION);
+        if (answer) {
+            this.previewService.preview(cheTask, answer === GO_TO_ACTION);
         }
     }
 }

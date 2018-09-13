@@ -13,7 +13,7 @@ import { Emitter, Event } from '@theia/core';
 import { DefaultFrontendApplicationContribution } from '@theia/core/lib/browser';
 import { TaskService } from '@theia/task/lib/browser';
 import { TaskWatcher } from '@theia/task/lib/common';
-import { PreviewUrlService } from './preview-url-service';
+import { PreviewUrlOpenService } from './preview-url-open-service';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../../common/task-protocol';
 
 @injectable()
@@ -25,8 +25,8 @@ export class PreviewsWidgetModel extends DefaultFrontendApplicationContribution 
     @inject(TaskWatcher)
     protected readonly taskWatcher: TaskWatcher;
 
-    @inject(PreviewUrlService)
-    protected readonly previewService: PreviewUrlService;
+    @inject(PreviewUrlOpenService)
+    protected readonly previewService: PreviewUrlOpenService;
 
     protected tasks: CheTaskConfiguration[] = [];
 

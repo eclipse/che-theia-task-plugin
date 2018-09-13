@@ -11,10 +11,10 @@
 import { interfaces } from 'inversify';
 import { WidgetFactory, FrontendApplicationContribution, bindViewContribution } from '@theia/core/lib/browser';
 import { PreviewsContribution } from './previews-contribution';
-import { PreviewUrlService } from './preview-url-service';
+import { PreviewUrlOpenService } from './preview-url-open-service';
 import { PreviewsWidget, PREVIEWS_WIDGET_FACTORY_ID } from './previews-widget';
 import { PreviewsWidgetModel } from './previews-widget-model';
-import { PreviewUrlNotification } from './preview-url-notification';
+import { PreviewUrlWatcher } from './preview-url-watcher';
 
 import '../../../src/browser/preview/style/index.css';
 
@@ -30,8 +30,8 @@ export function bindPreviewModule(bind: interfaces.Bind) {
         createWidget: () => ctx.container.get(PreviewsWidget)
     }));
 
-    bind(PreviewUrlService).toSelf().inSingletonScope();
+    bind(PreviewUrlOpenService).toSelf().inSingletonScope();
 
-    bind(PreviewUrlNotification).toSelf().inSingletonScope();
-    bind(FrontendApplicationContribution).toService(PreviewUrlNotification);
+    bind(PreviewUrlWatcher).toSelf().inSingletonScope();
+    bind(FrontendApplicationContribution).toService(PreviewUrlWatcher);
 }

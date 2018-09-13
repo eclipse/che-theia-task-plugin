@@ -11,18 +11,18 @@
 import { inject, injectable } from 'inversify';
 import { WidgetManager, ApplicationShell } from '@theia/core/lib/browser';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
-import { MiniBrowser, MiniBrowserProps } from '@theia/mini-browser/lib/browser/mini-browser';
+import { MiniBrowserProps } from '@theia/mini-browser/lib/browser/mini-browser';
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
 import { CheTaskConfiguration } from '../../common/task-protocol';
 
 @injectable()
-export class PreviewUrlService {
+export class PreviewUrlOpenService {
 
     @inject(WidgetManager)
-    protected widgetManager: WidgetManager;
+    protected readonly widgetManager: WidgetManager;
 
     @inject(ApplicationShell)
-    protected shell: ApplicationShell;
+    protected readonly shell: ApplicationShell;
 
     @inject(VariableResolverService)
     protected readonly varResolver: VariableResolverService;
@@ -37,7 +37,7 @@ export class PreviewUrlService {
      */
     async preview(task: CheTaskConfiguration, externally?: boolean): Promise<void> {
         const previewURL = task.previewUrl;
-        if (!previewURL) {
+        if (!previewURL || this.preview.length === 0) {
             return;
         }
         if (externally) {
@@ -48,25 +48,6 @@ export class PreviewUrlService {
     }
 
     /**
-     * Open the given URL to preview it in the embedded mini-browser.
-     * Method also tries to resolve the variables in the given URL.
-     * @param previewURL a URL to preview
-     * @param label short description of the given URL. Usually, the related task's label
-     */
-    protected async previewInternally(previewURL: string, label: string): Promise<void> {
-        const url = await this.varResolver.resolve(previewURL);
-        const widget = <MiniBrowser>await this.widgetManager.getOrCreateWidget(
-            MiniBrowser.Factory.ID,
-            <MiniBrowserProps>{
-                startPage: url,
-                name: `Preview - ${label}`
-            }
-        );
-        this.shell.addWidget(widget, { area: 'right' });
-        this.shell.activateWidget(widget.id);
-    }
-
-    /**
      * Open the given URL to preview it in a separate browser's tab.
      * Method also tries to resolve the variables in the given URL.
      * @param previewURL a URL to go to
@@ -74,5 +55,24 @@ export class PreviewUrlService {
     protected async previewExternally(previewURL: string): Promise<void> {
         const url = await this.varResolver.resolve(previewURL);
         this.windowService.openNewWindow(url);
+    }
+
+    /**
+     * Open the given URL to preview it in the embedded mini-browser.
+     * Method also tries to resolve the variables in the given URL.
+     * @param previewURL a URL to preview
+     * @param label short description of the given URL. Usually, the related task's label
+     */
+    protected async previewInternally(previewURL: string, label: string): Promise<void> {
+        const url = await this.varResolver.resolve(previewURL);
+        const widget = await this.widgetManager.getOrCreateWidget(
+            'mini-browser-factory',
+            <MiniBrowserProps>{
+                startPage: url,
+                name: `Preview - ${label}`
+            }
+        );
+        this.shell.addWidget(widget, { area: 'main' });
+        this.shell.activateWidget(widget.id);
     }
 }
