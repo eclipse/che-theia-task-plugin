@@ -72,7 +72,7 @@ export class PreviewUrlOpenService {
                 name: `Preview - ${label}`
             }
         );
-        this.shell.addWidget(widget, { area: 'main' });
+        this.shell.addWidget(widget, { area: 'right' });
         this.shell.activateWidget(widget.id);
     }
 }
