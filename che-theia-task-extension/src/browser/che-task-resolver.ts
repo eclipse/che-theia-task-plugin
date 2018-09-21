@@ -14,7 +14,7 @@ import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
 import { TaskConfiguration } from '@theia/task/lib/common';
 import { MachinePicker } from './machine-picker';
 import { CheTaskConfiguration, Target, CHE_TASK_TYPE } from '../common/task-protocol';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 
 /**
  * Prepares a Che Task config for execution:
@@ -28,8 +28,8 @@ export class CheTaskResolver implements TaskResolver {
     @inject(VariableResolverService)
     protected readonly variableResolverService: VariableResolverService;
 
-    @inject(CheWorkspaceClient)
-    protected readonly cheWorkspaceClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWorkspaceClient: CheWorkspaceClientService;
 
     @inject(MachinePicker)
     protected readonly machinePicker: MachinePicker;

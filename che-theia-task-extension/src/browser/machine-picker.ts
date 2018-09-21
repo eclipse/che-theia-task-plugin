@@ -10,13 +10,13 @@
 
 import { inject, injectable } from 'inversify';
 import { QuickOpenService, QuickOpenModel, QuickOpenItem, QuickOpenMode } from '@theia/core/lib/browser/quick-open/';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 
 @injectable()
 export class MachinePicker implements QuickOpenModel {
 
-    @inject(CheWorkspaceClient)
-    protected readonly cheWorkspaceClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWorkspaceClient: CheWorkspaceClientService;
 
     @inject(QuickOpenService)
     protected readonly quickOpenService: QuickOpenService;

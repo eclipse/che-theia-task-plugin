@@ -9,7 +9,7 @@
  **********************************************************************/
 
 import { ContainerModule, Container } from 'inversify';
-import { WidgetFactory, FrontendApplicationContribution } from '@theia/core/lib/browser';
+import { WidgetFactory, FrontendApplicationContribution, WebSocketConnectionProvider } from '@theia/core/lib/browser';
 import { TaskContribution } from '@theia/task/lib/browser';
 import { TerminalWidgetOptions } from '@theia/terminal/lib/browser/base/terminal-widget';
 import { VariableContribution } from '@theia/variable-resolver/lib/browser';
@@ -22,7 +22,7 @@ import { CHE_TERMINAL_WIDGET_FACTORY_ID, CheTerminalWidget, CheTerminalWidgetOpt
 import { MachinePicker } from './machine-picker';
 import { ServerVariablesContribution } from './variable/server-variables-contribution';
 import { ProjectPathVariableContribution } from './variable/che-task-variables-contribution';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService, cheWorkspaceClientServicePath } from '../common/che-workspace-client-service';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
 import { CheApiExternalEndPointProvider } from '../common/che-api-external-endpoint-provider';
 import { bindPreviewModule } from './preview/che-task-preview-frontend-module';
@@ -32,7 +32,10 @@ export default new ContainerModule(bind => {
     bindCheTaskPreferences(bind);
     bindPreviewModule(bind);
 
-    bind(CheWorkspaceClient).toSelf().inSingletonScope();
+    bind(CheWorkspaceClientService).toDynamicValue(ctx => {
+        const provider = ctx.container.get(WebSocketConnectionProvider);
+        return provider.createProxy<CheWorkspaceClientService>(cheWorkspaceClientServicePath);
+    }).inSingletonScope();
 
     bind(VariableContribution).to(ServerVariablesContribution).inSingletonScope();
     bind(VariableContribution).to(ProjectPathVariableContribution).inSingletonScope();

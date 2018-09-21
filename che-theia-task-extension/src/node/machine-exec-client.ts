@@ -10,7 +10,7 @@
 
 import { injectable, inject, postConstruct } from 'inversify';
 import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 
 export interface MachineIdentifier {
     workspaceId: string,
@@ -42,8 +42,8 @@ export class MachineExecClientFactory {
     @inject(JsonRpcProxyProvider)
     protected readonly jsonRpcProxyProvider: JsonRpcProxyProvider;
 
-    @inject(CheWorkspaceClient)
-    protected readonly cheWorkspaceClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWorkspaceClient: CheWorkspaceClientService;
 
     @postConstruct()
     protected async init() {
