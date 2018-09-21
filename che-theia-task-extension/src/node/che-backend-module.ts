@@ -17,7 +17,7 @@ import { MachineExecClientFactory } from './machine-exec-client';
 import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
-import { CheApiInternalEndPointProvider } from './che-api-internal-endpoint-provider';
+import { CheApiExternalEndPointProvider } from '../common/che-api-external-endpoint-provider';
 
 export default new ContainerModule(bind => {
     bind(CheWorkspaceClient).toSelf().inSingletonScope();
@@ -25,7 +25,7 @@ export default new ContainerModule(bind => {
     bind(JsonRpcProxyProvider).toSelf().inSingletonScope();
     bind(MachineExecClientFactory).toSelf().inSingletonScope();
 
-    bind(CheApiEndPointProvider).to(CheApiInternalEndPointProvider).inSingletonScope();
+    bind(CheApiEndPointProvider).to(CheApiExternalEndPointProvider).inSingletonScope();
 
     bind(CheTaskRunner).toSelf().inSingletonScope();
     bind(TaskRunner).to(CheTaskRunner).inSingletonScope();

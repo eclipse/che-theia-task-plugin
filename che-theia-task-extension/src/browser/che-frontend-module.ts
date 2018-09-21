@@ -24,7 +24,7 @@ import { ServerVariablesContribution } from './variable/server-variables-contrib
 import { ProjectPathVariableContribution } from './variable/che-task-variables-contribution';
 import { CheWorkspaceClient } from '../common/che-workspace-client';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
-import { CheApiExternalEndPointProvider } from './che-api-external-endpoint-provider';
+import { CheApiExternalEndPointProvider } from '../common/che-api-external-endpoint-provider';
 import { bindPreviewModule } from './preview/che-task-preview-frontend-module';
 import { bindCheTaskPreferences } from './task-preferences';
 
