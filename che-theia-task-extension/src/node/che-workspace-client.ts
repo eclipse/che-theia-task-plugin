@@ -34,8 +34,15 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
         }
 
         const restAPIConfig: IRestAPIConfig = {
-            baseUrl: cheApiEndpoint
+            baseUrl: cheApiEndpoint,
+            headers: {}
         };
+
+        const machineToken = await this.getMachineToken();
+        if (machineToken) {
+            restAPIConfig.headers['Authorization'] = "Bearer " + machineToken;
+        }
+
         this.restApiClient = WorkspaceClient.getRestApi(restAPIConfig);
     }
 
@@ -92,6 +99,10 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
 
     async getWorkspaceId(): Promise<string | undefined> {
         return await this.getEnvVarValue('CHE_WORKSPACE_ID');
+    }
+
+    private async getMachineToken(): Promise<string | undefined> {
+        return await this.getEnvVarValue("CHE_MACHINE_TOKEN");
     }
 
     protected async getEnvVarValue(envVar: string): Promise<string | undefined> {
