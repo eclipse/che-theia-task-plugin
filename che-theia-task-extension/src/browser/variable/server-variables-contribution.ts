@@ -10,7 +10,7 @@
 
 import { inject, injectable } from 'inversify';
 import { VariableContribution, VariableRegistry } from '@theia/variable-resolver/lib/browser';
-import { CheWorkspaceClient } from '../../common/che-workspace-client';
+import { CheWorkspaceClientService } from '../../common/che-workspace-client-service';
 
 /**
  * Contributes the substitution variables, in form of `server.<name>`,
@@ -19,8 +19,8 @@ import { CheWorkspaceClient } from '../../common/che-workspace-client';
 @injectable()
 export class ServerVariablesContribution implements VariableContribution {
 
-    @inject(CheWorkspaceClient)
-    protected readonly cheWsClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWsClient: CheWorkspaceClientService;
 
     async registerVariables(variables: VariableRegistry): Promise<void> {
         const machines = await this.cheWsClient.getMachines();

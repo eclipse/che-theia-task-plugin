@@ -11,7 +11,7 @@
 import { injectable, inject } from 'inversify';
 import { TerminalWidgetOptions } from '@theia/terminal/lib/browser/base/terminal-widget';
 import { TerminalWidgetImpl } from '@theia/terminal/lib/browser/terminal-widget-impl';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 import { Disposable } from '@theia/core/lib/common';
 
 export const CHE_TERMINAL_WIDGET_FACTORY_ID = 'che_terminal';
@@ -34,8 +34,8 @@ const RECONNECTING_OPTIONS = {
 @injectable()
 export class CheTerminalWidget extends TerminalWidgetImpl {
 
-    @inject(CheWorkspaceClient)
-    protected readonly cheWorkspaceClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWorkspaceClient: CheWorkspaceClientService;
 
     protected async attachTerminal(id: number): Promise<number> {
         return id;

@@ -15,17 +15,25 @@ import { CheTaskRunner } from './che-task-runner';
 import { CheTaskRunnerContribution } from './che-task-runner-contribution';
 import { MachineExecClientFactory } from './machine-exec-client';
 import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService, cheWorkspaceClientServicePath } from '../common/che-workspace-client-service';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
-import { CheApiInternalEndPointProvider } from './che-api-internal-endpoint-provider';
+import { CheApiExternalEndPointProvider } from '../common/che-api-external-endpoint-provider';
+import { CheWorkspaceClientServiceImpl } from './che-workspace-client';
+import { ConnectionHandler, JsonRpcConnectionHandler } from '@theia/core';
 
 export default new ContainerModule(bind => {
-    bind(CheWorkspaceClient).toSelf().inSingletonScope();
+    bind(CheWorkspaceClientServiceImpl).toSelf().inSingletonScope();
+    bind(CheWorkspaceClientService).to(CheWorkspaceClientServiceImpl).inSingletonScope();
+     bind(ConnectionHandler).toDynamicValue(ctx =>
+        new JsonRpcConnectionHandler(cheWorkspaceClientServicePath, () =>
+            ctx.container.get(CheWorkspaceClientService)
+        )
+    );
 
     bind(JsonRpcProxyProvider).toSelf().inSingletonScope();
     bind(MachineExecClientFactory).toSelf().inSingletonScope();
 
-    bind(CheApiEndPointProvider).to(CheApiInternalEndPointProvider).inSingletonScope();
+    bind(CheApiEndPointProvider).to(CheApiExternalEndPointProvider).inSingletonScope();
 
     bind(CheTaskRunner).toSelf().inSingletonScope();
     bind(TaskRunner).to(CheTaskRunner).inSingletonScope();

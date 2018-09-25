@@ -11,10 +11,11 @@
 import { injectable, postConstruct, inject } from 'inversify';
 import WorkspaceClient, { IRemoteAPI, IWorkspace, IServer, IRestAPIConfig, IMachine, ICommand } from '@eclipse-che/workspace-client';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables/env-variables-protocol';
-import { CheApiEndPointProvider } from './che-api-endpoint-provider';
+import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
+import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 
 @injectable()
-export class CheWorkspaceClient {
+export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService {
 
     protected restApiClient: IRemoteAPI;
 
@@ -33,8 +34,15 @@ export class CheWorkspaceClient {
         }
 
         const restAPIConfig: IRestAPIConfig = {
-            baseUrl: cheApiEndpoint
+            baseUrl: cheApiEndpoint,
+            headers: {}
         };
+
+        const machineToken = await this.getMachineToken();
+        if (machineToken) {
+            restAPIConfig.headers['Authorization'] = "Bearer " + machineToken;
+        }
+
         this.restApiClient = WorkspaceClient.getRestApi(restAPIConfig);
     }
 
@@ -90,7 +98,11 @@ export class CheWorkspaceClient {
     }
 
     async getWorkspaceId(): Promise<string | undefined> {
-        return this.getEnvVarValue('CHE_WORKSPACE_ID');
+        return await this.getEnvVarValue('CHE_WORKSPACE_ID');
+    }
+
+    private async getMachineToken(): Promise<string | undefined> {
+        return await this.getEnvVarValue("CHE_MACHINE_TOKEN");
     }
 
     protected async getEnvVarValue(envVar: string): Promise<string | undefined> {

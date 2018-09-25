@@ -13,14 +13,14 @@ import { ICommand } from '@eclipse-che/workspace-client';
 import { TaskProvider } from '@theia/task/lib/browser';
 import { TaskConfiguration } from '@theia/task/lib/common';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../common/task-protocol';
-import { CheWorkspaceClient } from '../common/che-workspace-client';
+import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 
 /** Reads the commands from the current Che workspace and provides it as Task Configurations. */
 @injectable()
 export class CheTaskProvider implements TaskProvider {
 
-    @inject(CheWorkspaceClient)
-    protected readonly cheWsClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWsClient: CheWorkspaceClientService;
 
     async provideTasks(): Promise<TaskConfiguration[]> {
         const tasks: TaskConfiguration[] = [];

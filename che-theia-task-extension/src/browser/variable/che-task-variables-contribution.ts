@@ -10,7 +10,7 @@
 
 import {inject, injectable} from 'inversify';
 import {VariableContribution, VariableRegistry} from '@theia/variable-resolver/lib/browser';
-import {CheWorkspaceClient} from '../../common/che-workspace-client';
+import {CheWorkspaceClientService} from '../../common/che-workspace-client-service';
 import {WorkspaceService} from '@theia/workspace/lib/browser/workspace-service';
 import {SelectionService} from '@theia/core/lib/common';
 import {FileStat} from '@theia/filesystem/lib/common/filesystem';
@@ -24,8 +24,8 @@ export class ProjectPathVariableContribution implements VariableContribution {
 
     @inject(WorkspaceService)
     protected readonly workspaceService: WorkspaceService;
-    @inject(CheWorkspaceClient)
-    protected readonly cheWsClient: CheWorkspaceClient;
+    @inject(CheWorkspaceClientService)
+    protected readonly cheWsClient: CheWorkspaceClientService;
     @inject(SelectionService)
     protected readonly selectionService: SelectionService;
     @inject(MessageService)
