@@ -11,13 +11,14 @@
 import { injectable, postConstruct, inject } from 'inversify';
 import WorkspaceClient, { IRemoteAPI, IWorkspace, IServer, IRestAPIConfig, IMachine, ICommand } from '@eclipse-che/workspace-client';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables/env-variables-protocol';
+import { Deferred } from '@theia/core/lib/common/promise-util';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
 import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
 
 @injectable()
 export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService {
 
-    protected restApiClient: IRemoteAPI;
+    private deferredRestApiClient = new Deferred<IRemoteAPI>();
 
     @inject(EnvVariablesServer)
     protected readonly envVariablesServer: EnvVariablesServer;
@@ -43,7 +44,13 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
             restAPIConfig.headers['Authorization'] = "Bearer " + machineToken;
         }
 
-        this.restApiClient = WorkspaceClient.getRestApi(restAPIConfig);
+        console.log('deferredRestApiClient BEFORE');
+        this.deferredRestApiClient.resolve(WorkspaceClient.getRestApi(restAPIConfig));
+        console.log('deferredRestApiClient AFTER');
+    }
+
+    protected get restApiClient(): Promise<IRemoteAPI> {
+        return this.deferredRestApiClient.promise;
     }
 
     async getMachineExecServerURL(): Promise<string> {
@@ -94,7 +101,8 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
         if (!workspaceId) {
             throw new Error('Environment variable CHE_WORKSPACE_ID is not set.');
         }
-        return await this.restApiClient.getById<IWorkspace>(workspaceId);
+        const apiClient = await this.restApiClient;
+        return await apiClient.getById<IWorkspace>(workspaceId);
     }
 
     async getWorkspaceId(): Promise<string | undefined> {
