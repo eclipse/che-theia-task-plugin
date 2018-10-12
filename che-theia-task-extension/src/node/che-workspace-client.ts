@@ -44,9 +44,7 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
             restAPIConfig.headers['Authorization'] = "Bearer " + machineToken;
         }
 
-        console.log('deferredRestApiClient BEFORE');
         this.deferredRestApiClient.resolve(WorkspaceClient.getRestApi(restAPIConfig));
-        console.log('deferredRestApiClient AFTER');
     }
 
     protected get restApiClient(): Promise<IRemoteAPI> {
