@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "strict": true,
+        "skipLibCheck": true,
         "strictPropertyInitialization": false,
         "experimentalDecorators": true,
         "noUnusedLocals": true,
