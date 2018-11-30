@@ -66,7 +66,7 @@ export class PreviewUrlOpenService {
     protected async previewInternally(previewURL: string, label: string): Promise<void> {
         const url = await this.varResolver.resolve(previewURL);
         const widget = await this.widgetManager.getOrCreateWidget(
-            MiniBrowser.Factory.ID,
+            MiniBrowser.ID,
             <MiniBrowserProps>{
                 startPage: url,
                 name: `Preview - ${label}`
