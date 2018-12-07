@@ -23,9 +23,6 @@ export class CheTaskRunner implements TaskRunner {
     @inject(MachineExecClientFactory)
     protected readonly machineExecClientFactory: MachineExecClientFactory;
 
-    @inject(MachineExecClientFactory)
-    protected readonly execAttachClientFactory: MachineExecClientFactory;
-
     @inject(TaskManager)
     protected readonly taskManager: TaskManager;
 
@@ -60,9 +57,6 @@ export class CheTaskRunner implements TaskRunner {
             await  this.machineExecClientFactory.fetchMachineExecServerURL();
             const execCreateClient = this.machineExecClientFactory.createExecClient();
             execId = await execCreateClient.create(machineExec);
-
-            const execAttachClient = this.execAttachClientFactory.createAttachClient(execId);
-            execAttachClient.attach();
 
             return this.taskFactory({
                 label: taskConfig.label,

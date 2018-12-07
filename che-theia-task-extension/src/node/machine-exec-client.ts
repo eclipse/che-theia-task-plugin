@@ -9,8 +9,10 @@
  **********************************************************************/
 
 import { injectable, inject, postConstruct } from 'inversify';
+import URI from '@theia/core/lib/common/uri';
 import { JsonRpcProxyProvider } from './json-rpc-proxy-provider';
 import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
+import { CONNECT_TERMINAL_SEGMENT, ATTACH_TERMINAL_SEGMENT } from '../common/terminal-protocol';
 
 export interface MachineIdentifier {
     workspaceId: string,
@@ -61,7 +63,8 @@ export class MachineExecClientFactory {
             throw new Error('Machine-exec server is not found in the current workspace.');
         }
         if (!this.execClient) {
-            this.execClient = this.jsonRpcProxyProvider.createProxy<ExecCreateClient>(`${this.machineExecServerEndpoint}/connect`);
+            const url = new URI(this.machineExecServerEndpoint).resolve(CONNECT_TERMINAL_SEGMENT);
+            this.execClient = this.jsonRpcProxyProvider.createProxy<ExecCreateClient>(url.toString());
         }
         return this.execClient;
     }
@@ -70,6 +73,7 @@ export class MachineExecClientFactory {
         if (this.machineExecServerEndpoint === undefined) {
             throw new Error('Machine-exec server is not found in the current workspace.');
         }
-        return this.jsonRpcProxyProvider.createProxy<ExecAttachClient>(`${this.machineExecServerEndpoint}/attach/${id}`);
+        const url = new URI(this.machineExecServerEndpoint).resolve(ATTACH_TERMINAL_SEGMENT).resolve(`${id}`);
+        return this.jsonRpcProxyProvider.createProxy<ExecAttachClient>(url.toString());
     }
 }
