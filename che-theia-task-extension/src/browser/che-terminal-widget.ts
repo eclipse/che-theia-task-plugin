@@ -9,10 +9,12 @@
  **********************************************************************/
 
 import { injectable, inject } from 'inversify';
+import { Disposable } from '@theia/core/lib/common';
+import URI from '@theia/core/lib/common/uri';
 import { TerminalWidgetOptions } from '@theia/terminal/lib/browser/base/terminal-widget';
 import { TerminalWidgetImpl } from '@theia/terminal/lib/browser/terminal-widget-impl';
 import { CheWorkspaceClientService } from '../common/che-workspace-client-service';
-import { Disposable } from '@theia/core/lib/common';
+import { ATTACH_TERMINAL_SEGMENT } from '../common/terminal-protocol';
 
 export const CHE_TERMINAL_WIDGET_FACTORY_ID = 'che_terminal';
 
@@ -42,8 +44,9 @@ export class CheTerminalWidget extends TerminalWidgetImpl {
     }
 
     protected async connectTerminalProcess(): Promise<void> {
-        const termServer = await this.cheWorkspaceClient.getMachineExecServerURL();
-        const websocketStream = await new RWS(`${termServer}/attach/${this.terminalId}`, [], RECONNECTING_OPTIONS);
+        const termServerEndpoint = await this.cheWorkspaceClient.getMachineExecServerURL();
+        const terminalURL = new URI(termServerEndpoint).resolve(ATTACH_TERMINAL_SEGMENT).resolve(`${this.terminalId}`);
+        const websocketStream = await new RWS(terminalURL.toString(), [], RECONNECTING_OPTIONS);
 
         websocketStream.addEventListener('error', (event: Event) => {
             console.error('WebsocketStream error:', event);
