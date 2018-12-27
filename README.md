@@ -1,73 +1,67 @@
 # Theia - Che Task Extension
-The example of how to build the Theia-based applications with the Che Task extension.
 
-## Getting started
+The extension allows to work with the Che Commands through the Theia Tasks concept.
 
-Install [nvm](https://github.com/creationix/nvm#install-script).
+Contributes:
+- Che task runner that runs the Che commands as the Theia tasks;
+- Che task resolver that fills the missed mandatory parameters in a task;
+- Che task provider that provides the Che workspace's commands as provided Theia tasks;
+- `Preview URLs` view;
+- `che.task.preview.notifications` preference to set the preferred way of previewing a service URL:
+  - `on` value enables a notification to ask a user how a URL should be opened
+  - `alwaysPreview` value tells Theia to open a preview URL automatically inside Theia as soon as a task is running
+  - `alwaysGoTo` value tells Theia to open a preview URL automatically in a separate browser's tab as soon as a task is running
+  - `off` value disables opening a preview URL (automatically and with a notification)
 
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+The extension provides the `CheTaskService` allows to run a Che task by it's name.
 
-Install npm and node.
+The format of a Che task is the following:
+```json
+{
+    "type": "che",
+    "label": "",
+    "command": "",
+    "target": {
+        "workspaceId": "",
+        "machineName": ""
+    },
+    "previewUrl": ""
+}
+```
+The `target` and `previewUrl` fields are optional.
 
-    nvm install 8
-    nvm use 8
+The variables substitution is supported for the `command` and `previewUrl` fields.
 
-Install yarn.
+## Running and developing with the example app
 
-    npm install -g yarn
+### Start Che
 
-## Running the browser example
+Run a Che7 workspace with the `che-machine-exec-plugin` included, e.g. use `Che7` stack.
 
-    yarn rebuild:browser
-    cd browser-app
-    yarn start
+### Run the example Theia app
+Set the environment variables point to your workspace:
+- `CHE_API_EXTERNAL`
+- `CHE_API_INTERNAL`
+- `CHE_WORKSPACE_ID`
 
-Open http://localhost:3000 in the browser.
+### Build the extension and start the example app
+```
+yarn
+cd browser-app
+yarn start
+```
+Open http://localhost:3000 in the browser
 
-## Running the Electron example
+### Start watching of the `che-theia-task-extension`
 
-    yarn rebuild:electron
-    cd electron-app
-    yarn start
+```
+cd che-theia-task-extension
+yarn watch
+```
 
-## Developing with the browser example
+### Start watching of the example app
 
-Start watching of the che-theia-task-extension.
-
-    cd che-theia-task-extension
-    yarn watch
-
-Start watching of the browser example.
-
-    yarn rebuild:browser
-    cd browser-app
-    yarn watch
-
-Launch `Start Browser Backend` configuration from VS code.
-
-Open http://localhost:3000 in the browser.
-
-## Developing with the Electron example
-
-Start watching of the che-theia-task-extension.
-
-    cd che-theia-task-extension
-    yarn watch
-
-Start watching of the electron example.
-
-    yarn rebuild:electron
-    cd electron-app
-    yarn watch
-
-Launch `Start Electron Backend` configuration from VS code.
-
-## Publishing che-theia-task-extension
-
-Create a npm user and login to the npm registry, [more on npm publishing](https://docs.npmjs.com/getting-started/publishing-npm-packages).
-
-    npm login
-
-Publish packages with lerna to update versions properly across local packages, [more on publishing with lerna](https://github.com/lerna/lerna#publish).
-
-    npx lerna publish
+```
+cd browser-app
+yarn watch
+```
