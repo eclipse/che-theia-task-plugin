@@ -89,8 +89,13 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
     }
 
     async getCommands(): Promise<ICommand[]> {
+        let commands: any;
         const workspace = await this.getCurrentWorkspace();
-        const commands = workspace.config.commands;
+        if (workspace.runtime) {
+            commands = workspace.runtime.commands;
+        } else {
+            commands = workspace.config.commands;
+        }
         return commands ? commands : [];
     }
 
