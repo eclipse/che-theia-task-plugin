@@ -29,7 +29,7 @@
     "@theia/core": "0.3.14",
     "@theia/mini-browser": "0.3.14",
     "@theia/task": "0.3.14",
-    "@eclipse-che/workspace-client": "latest",
+    "@eclipse-che/workspace-client": "0.0.1-1546444839",
     "reconnecting-websocket": "3.2.2"
   },
   "devDependencies": {
