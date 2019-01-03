@@ -101,7 +101,6 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
 
     async getCurrentWorkspace(): Promise<IWorkspace> {
         const workspaceId = await this.getWorkspaceId();
-        console.log(workspaceId);
         if (!workspaceId) {
             throw new Error('Environment variable CHE_WORKSPACE_ID is not set.');
         }
