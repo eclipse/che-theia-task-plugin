@@ -9,7 +9,8 @@
  **********************************************************************/
 
 import { injectable, postConstruct, inject } from 'inversify';
-import WorkspaceClient, { IRemoteAPI, IWorkspace, IServer, IRestAPIConfig, IMachine, ICommand } from '@eclipse-che/workspace-client';
+import WorkspaceClient, { IRemoteAPI, IRestAPIConfig } from '@eclipse-che/workspace-client';
+import { che } from '@eclipse-che/api';
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables/env-variables-protocol';
 import { Deferred } from '@theia/core/lib/common/promise-util';
 import { CheApiEndPointProvider } from '../common/che-api-endpoint-provider';
@@ -56,16 +57,16 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
         if (!machineExecServer) {
             throw new Error('No server with type "terminal" found.');
         }
-        return machineExecServer.url;
+        return machineExecServer.url!;
     }
 
-    protected async getMachineExecServer(): Promise<IServer | undefined> {
+    protected async getMachineExecServer(): Promise<che.workspace.Server | undefined> {
         const machines = await this.getMachines();
         for (const machineName in machines) {
             if (!machines.hasOwnProperty(machineName)) {
                 continue;
             }
-            const servers = machines[machineName].servers;
+            const servers = machines[machineName].servers!;
             for (const serverName in servers) {
                 if (!servers.hasOwnProperty(serverName)) {
                     continue;
@@ -79,33 +80,33 @@ export class CheWorkspaceClientServiceImpl implements CheWorkspaceClientService 
         return undefined;
     }
 
-    async getMachines(): Promise<{ [attrName: string]: IMachine }> {
+    async getMachines(): Promise<{ [attrName: string]: che.workspace.Machine }> {
         const workspace = await this.getCurrentWorkspace();
         if (!workspace.runtime) {
             throw new Error('Workspace is not running.');
         }
 
-        return workspace.runtime.machines;
+        return workspace.runtime.machines!;
     }
 
-    async getCommands(): Promise<ICommand[]> {
+    async getCommands(): Promise<che.workspace.Command[]> {
         let commands: any;
         const workspace = await this.getCurrentWorkspace();
         if (workspace.runtime) {
             commands = workspace.runtime.commands;
         } else {
-            commands = workspace.config.commands;
+            commands = workspace.config!.commands;
         }
         return commands ? commands : [];
     }
 
-    async getCurrentWorkspace(): Promise<IWorkspace> {
+    async getCurrentWorkspace(): Promise<che.workspace.Workspace> {
         const workspaceId = await this.getWorkspaceId();
         if (!workspaceId) {
             throw new Error('Environment variable CHE_WORKSPACE_ID is not set.');
         }
         const apiClient = await this.restApiClient;
-        return await apiClient.getById<IWorkspace>(workspaceId);
+        return await apiClient.getById<che.workspace.Workspace>(workspaceId);
     }
 
     async getWorkspaceId(): Promise<string | undefined> {
