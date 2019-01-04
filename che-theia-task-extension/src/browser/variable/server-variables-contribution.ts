@@ -28,7 +28,7 @@ export class ServerVariablesContribution implements VariableContribution {
             if (!machines.hasOwnProperty(machineName)) {
                 continue;
             }
-            const servers = machines[machineName].servers;
+            const servers = machines[machineName].servers!;
             for (const serverName in servers) {
                 if (!servers.hasOwnProperty(serverName)) {
                     continue;

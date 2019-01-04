@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
 
-import { IWorkspace, IMachine, ICommand } from '@eclipse-che/workspace-client';
+import { che } from '@eclipse-che/api';
 
 export const cheWorkspaceClientServicePath = "/services/ws-client";
 
@@ -16,11 +16,11 @@ export const CheWorkspaceClientService = Symbol('CheWorkspaceClientService');
 export interface CheWorkspaceClientService {
     getMachineExecServerURL(): Promise<string>;
 
-    getMachines(): Promise<{ [attrName: string]: IMachine }>;
+    getMachines(): Promise<{ [attrName: string]: che.workspace.Machine }>;
 
-    getCommands(): Promise<ICommand[]>;
+    getCommands(): Promise<che.workspace.Command[]>;
 
-    getCurrentWorkspace(): Promise<IWorkspace>;
+    getCurrentWorkspace(): Promise<che.workspace.Workspace>;
 
     getWorkspaceId(): Promise<string | undefined>;
 }

@@ -9,7 +9,7 @@
  **********************************************************************/
 
 import { injectable, inject } from 'inversify';
-import { ICommand } from '@eclipse-che/workspace-client';
+import { che } from '@eclipse-che/api';
 import { TaskProvider } from '@theia/task/lib/browser';
 import { TaskConfiguration } from '@theia/task/lib/common';
 import { CheTaskConfiguration, CHE_TASK_TYPE } from '../common/task-protocol';
@@ -29,11 +29,11 @@ export class CheTaskProvider implements TaskProvider {
         for (const command of commands) {
             const providedTask: CheTaskConfiguration = {
                 type: CHE_TASK_TYPE,
-                label: `${command.name}`,
-                command: command.commandLine,
+                label: `${command.name!}`,
+                command: command.commandLine!,
                 target: {
                     machineName: this.getCommandAttribute(command, 'machineName')
-                } ,
+                },
                 previewUrl: this.getCommandAttribute(command, 'previewUrl')
             };
             tasks.push(providedTask);
@@ -41,7 +41,7 @@ export class CheTaskProvider implements TaskProvider {
         return tasks;
     }
 
-    protected getCommandAttribute(command: ICommand, attrName: string): string | undefined {
+    protected getCommandAttribute(command: che.workspace.Command, attrName: string): string | undefined {
         if (!command.attributes) {
             return undefined;
         }
