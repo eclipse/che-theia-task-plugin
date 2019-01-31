@@ -7,14 +7,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
+import { TaskDefinition } from '@theia/plugin';
 
-import { TaskConfiguration, TaskInfo } from '@theia/task/lib/common';
+export const CHE_TASK_TYPE: string = 'che';
+export const MACHINE_NAME_ATTRIBUTE: string = 'machineName';
+export const PREVIEW_URL_ATTRIBUTE: string = 'previewUrl';
 
-export const CHE_TASK_TYPE = 'che';
-
-export interface CheTaskConfiguration extends TaskConfiguration {
-    readonly type: 'che',
-    readonly command: string,
+export interface CheTaskDefinition extends TaskDefinition {
     readonly target?: Target,
     readonly previewUrl?: string
 }
@@ -22,8 +21,4 @@ export interface CheTaskConfiguration extends TaskConfiguration {
 export interface Target {
     workspaceId?: string,
     machineName?: string
-}
-
-export interface CheTaskInfo extends TaskInfo {
-    readonly execId: number;
 }

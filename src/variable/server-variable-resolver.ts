@@ -9,37 +9,47 @@
  **********************************************************************/
 
 import { inject, injectable } from 'inversify';
-import { VariableContribution, VariableRegistry } from '@theia/variable-resolver/lib/browser';
-import { CheWorkspaceClientService } from '../../common/che-workspace-client-service';
+import * as che from '@eclipse-che/plugin';
+import { CheWorkspaceClient } from '../che-workspace/che-workspace-client';
 
 /**
  * Contributes the substitution variables, in form of `server.<name>`,
  * which are resolved to the URL of the server of Che machines.
  */
 @injectable()
-export class ServerVariablesContribution implements VariableContribution {
+export class ServerVariableResolver {
 
-    @inject(CheWorkspaceClientService)
-    protected readonly cheWsClient: CheWorkspaceClientService;
+    @inject(CheWorkspaceClient)
+    protected readonly cheWorkspaceClient!: CheWorkspaceClient;
 
-    async registerVariables(variables: VariableRegistry): Promise<void> {
-        const machines = await this.cheWsClient.getMachines();
+    async registerVariables(): Promise<void> {
+        const machines = await this.cheWorkspaceClient.getMachines();
         for (const machineName in machines) {
             if (!machines.hasOwnProperty(machineName)) {
                 continue;
             }
+
             const servers = machines[machineName].servers!;
+
             for (const serverName in servers) {
                 if (!servers.hasOwnProperty(serverName)) {
                     continue;
                 }
+
                 const url = servers[serverName].url;
-                variables.registerVariable({
-                    name: `server.${serverName}`,
-                    description: url,
-                    resolve: () => url
-                });
+                if (url) {
+                    che.variables.registerVariable(this.createVariable(serverName, url));
+                }
             }
+        }
+    }
+
+    private createVariable(serverName: string, url: string): che.Variable {
+        return {
+            name: `server.${serverName}`,
+            description: url,
+            resolve: async () => url,
+            isResolved: true
         }
     }
 }

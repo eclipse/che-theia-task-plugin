@@ -10,11 +10,9 @@
 
 import { che } from '@eclipse-che/api';
 
-export const cheWorkspaceClientServicePath = "/services/ws-client";
+export const CheWorkspaceClient = Symbol('CheWorkspaceClient');
 
-export const CheWorkspaceClientService = Symbol('CheWorkspaceClientService');
-export interface CheWorkspaceClientService {
-    getMachineExecServerURL(): Promise<string>;
+export interface CheWorkspaceClient {
 
     getMachines(): Promise<{ [attrName: string]: che.workspace.Machine }>;
 
@@ -23,4 +21,6 @@ export interface CheWorkspaceClientService {
     getCurrentWorkspace(): Promise<che.workspace.Workspace>;
 
     getWorkspaceId(): Promise<string | undefined>;
+
+    getMachineExecServerURL(): Promise<string>;
 }

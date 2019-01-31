@@ -1,8 +1,6 @@
 {
     "compilerOptions": {
         "strict": true,
-        "skipLibCheck": true,
-        "strictPropertyInitialization": false,
         "experimentalDecorators": true,
         "noUnusedLocals": true,
         "emitDecoratorMetadata": true,
@@ -10,10 +8,12 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "target": "es5",
-        "jsx": "react",
         "lib": [
             "es6",
-            "dom"
+            
+            "webworker"
+            
+            
         ],
         "sourceMap": true,
         "rootDir": "src",
