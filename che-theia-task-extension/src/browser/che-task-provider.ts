@@ -34,7 +34,8 @@ export class CheTaskProvider implements TaskProvider {
                 target: {
                     machineName: this.getCommandAttribute(command, 'machineName')
                 },
-                previewUrl: this.getCommandAttribute(command, 'previewUrl')
+                previewUrl: this.getCommandAttribute(command, 'previewUrl'),
+                _source: 'che'
             };
             tasks.push(providedTask);
         }
