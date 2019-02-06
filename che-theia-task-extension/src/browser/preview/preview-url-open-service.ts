@@ -11,9 +11,10 @@
 import { inject, injectable } from 'inversify';
 import { WidgetManager, ApplicationShell } from '@theia/core/lib/browser';
 import { WindowService } from '@theia/core/lib/browser/window/window-service';
-import { MiniBrowserProps, MiniBrowser } from '@theia/mini-browser/lib/browser/mini-browser';
 import { VariableResolverService } from '@theia/variable-resolver/lib/browser';
 import { CheTaskConfiguration } from '../../common/task-protocol';
+import { MiniBrowserOpenHandler } from '@theia/mini-browser/lib/browser/mini-browser-open-handler';
+import URI from '@theia/core/lib/common/uri';
 
 @injectable()
 export class PreviewUrlOpenService {
@@ -29,6 +30,9 @@ export class PreviewUrlOpenService {
 
     @inject(WindowService)
     protected readonly windowService: WindowService;
+
+    @inject(MiniBrowserOpenHandler)
+    protected readonly miniBrowserOpenHandler: MiniBrowserOpenHandler;
 
     /**
      * Open the given task's preview URL.
@@ -65,14 +69,11 @@ export class PreviewUrlOpenService {
      */
     protected async previewInternally(previewURL: string, label: string): Promise<void> {
         const url = await this.varResolver.resolve(previewURL);
-        const widget = await this.widgetManager.getOrCreateWidget(
-            MiniBrowser.Factory.ID,
-            <MiniBrowserProps>{
-                startPage: url,
-                name: `Preview - ${label}`
+        await this.miniBrowserOpenHandler.open(new URI(url), {
+            name: `Preview - ${label}`,
+            widgetOptions: {
+                area: 'right'
             }
-        );
-        this.shell.addWidget(widget, { area: 'right' });
-        this.shell.activateWidget(widget.id);
+        });
     }
 }
