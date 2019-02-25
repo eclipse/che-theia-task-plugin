@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2019 Red Hat, Inc.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,9 +7,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
+
 import { injectable, inject } from "inversify";
 import * as theia from '@theia/plugin';
-import { MachineExecClient } from "./machine-exec-client";
+import { AttachTerminalClient } from "./attach-client";
 
 export const TerminalWidgetFactory = Symbol('TerminalWidgetFactory');
 export interface TerminalWidgetFactory {
@@ -25,20 +26,22 @@ export interface CheTerminalWidgetOptions {
 @injectable()
 export class CheTerminalWidget {
 
-    @inject(MachineExecClient)
-    protected readonly machineExecClient!: MachineExecClient;
+    @inject(AttachTerminalClient)
+    protected readonly attachTerminalClient!: AttachTerminalClient;
 
     @inject(CheTerminalWidgetOptions)
     protected readonly options!: CheTerminalWidgetOptions;
 
     async connectTerminalProcess(): Promise<void> {
+        // console.log('========================== TERMINAL WIDGET ');
         const outputChannel = theia.window.createOutputChannel(this.options.title);
-        outputChannel.show();
-
-        this.machineExecClient.connectTerminalProcess(this.options.terminalId, {
+        await this.attachTerminalClient.connectTerminalProcess(this.options.terminalId, {
             onMessage: content => {
                 outputChannel.appendLine(content);
             }
         });
+        // console.log('=== after TERMINAL WIDGET');
+
+        outputChannel.show();
     }
 }

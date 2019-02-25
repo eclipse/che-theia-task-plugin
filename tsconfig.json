@@ -20,6 +20,6 @@
         "outDir": "lib"
     },
     "include": [
-        "src"
+        "src", "resources/preview-urls.js"
     ]
 }

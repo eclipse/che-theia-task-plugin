@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2019 Red Hat, Inc.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,6 @@ const RECONNECTING_OPTIONS = {
 
 const CREATE_METHOD_NAME: string = 'create';
 const CONNECT_TERMINAL_SEGMENT: string = 'connect';
-const ATTACH_TERMINAL_SEGMENT: string = 'attach';
 
 export interface MachineIdentifier {
     workspaceId: string,
@@ -49,22 +48,6 @@ export class MachineExecClient {
 
     @inject(CheWorkspaceClient)
     protected readonly cheWorkspaceClient!: CheWorkspaceClient;
-
-    async connectTerminalProcess(terminalId: number, outputHandler: TerminalProcessOutputHandler): Promise<void> {
-        const termServerEndpoint = await this.cheWorkspaceClient.getMachineExecServerURL();
-        const terminalURL = `${termServerEndpoint}/${ATTACH_TERMINAL_SEGMENT}/${terminalId}`;
-
-        const webSocket = await new ReconnectingWebSocket(terminalURL, [], RECONNECTING_OPTIONS);
-
-        webSocket.addEventListener('message', (message: any) => {
-            outputHandler.onMessage(message.data);
-        });
-
-        webSocket.addEventListener('error', (event: Event) => {
-            console.error('Websocket error:', event);
-        });
-        // TODO close webSocket when task is completed; event with runtime info is not implemented for plugin API at the moment 
-    }
 
     async getExecId(machineExec: MachineExec): Promise<number> {
         const connection = await this.getConnection();

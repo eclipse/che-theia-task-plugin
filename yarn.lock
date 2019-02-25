@@ -191,10 +191,10 @@
     read-pkg "4.0.1"
     yargs "12.0.1"
 
-"@theia/plugin@next":
-  version "0.4.0-next.a83fb710"
-  resolved "https://registry.yarnpkg.com/@theia/plugin/-/plugin-0.4.0-next.a83fb710.tgz#6ef361e5b68d7cca67b62da9c5bd7565858b7a23"
-  integrity sha512-q423oPV/uTT70yoUHlJ8vwZpWSue+1e8sNqzD5WEATaxUNX6PPkpLf65cliz43FllOrNfv7VBs0Lf90yNUbbbw==
+"@theia/plugin@0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@theia/plugin/-/plugin-0.3.19.tgz#eb1ea2d8311097535b6613ea6d554ff93bb4efc8"
+  integrity sha512-8iKIPE7UQfaxbN/p+eHqT4wmbEgdVGxMMhzczqrX0x9sFwXxVOipC9urdfG8UvNWQO3dXCssxVslNF56jScofg==
 
 "@types/body-parser@*", "@types/body-parser@^1.16.4":
   version "1.17.0"

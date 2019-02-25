@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2019 Red Hat, Inc.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@ import { che as cheApi } from '@eclipse-che/api'
 import { Task, ShellExecution } from '@theia/plugin';
 import { CHE_TASK_TYPE, MACHINE_NAME_ATTRIBUTE, PREVIEW_URL_ATTRIBUTE, CheTaskDefinition, Target } from './task-protocol';
 import { MachinesPicker } from './machine/machines-picker';
-import { ProjectPathVariableResolver } from './variable/project-path-variable-resolver';
 import { CheWorkspaceClient } from './che-workspace/che-workspace-client';
 
 /** Reads the commands from the current Che workspace and provides it as Task Configurations. */
@@ -25,9 +24,6 @@ export class CheTaskProvider {
 
     @inject(CheWorkspaceClient)
     protected readonly cheWorkspaceClient!: CheWorkspaceClient;
-
-    @inject(ProjectPathVariableResolver)
-    protected readonly projectPathVariableResolver!: ProjectPathVariableResolver;
 
     async provideTasks(): Promise<Task[]> {
         const tasks: Task[] = [];
@@ -45,6 +41,7 @@ export class CheTaskProvider {
         if (taskType !== CHE_TASK_TYPE) {
             throw new Error(`Unsupported task type: ${taskType}`);
         }
+
         const cheTaskDefinition = taskDefinition as CheTaskDefinition;
         const target = cheTaskDefinition.target;
         const resultTarget: Target = {};
@@ -66,6 +63,7 @@ export class CheTaskProvider {
         const resultTask = {
             definition: {
                 type: taskType,
+                command: cheTaskDefinition.command,
                 target: resultTarget,
                 previewUrl: previewUrl
             },
@@ -75,7 +73,7 @@ export class CheTaskProvider {
         };
 
         if (previewUrl) {
-            resultTask.definition.previewUrl = await che.variables.resolve(previewUrl);
+            resultTask.definition.previewUrl = previewUrl;
         }
 
         if (!task.execution) {
@@ -98,6 +96,7 @@ export class CheTaskProvider {
         return {
             definition: {
                 type: CHE_TASK_TYPE,
+                command: command.commandLine,
                 target: {
                     machineName: this.getCommandAttribute(command, MACHINE_NAME_ATTRIBUTE)
                 },
@@ -105,9 +104,6 @@ export class CheTaskProvider {
             },
             name: `${command.name}`,
             source: CHE_TASK_TYPE,
-            execution: {
-                command: command.commandLine
-            }
         };
     }
 

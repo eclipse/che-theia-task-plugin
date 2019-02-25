@@ -7,7 +7,8 @@
   "version": "0.0.1",
   "license": "none",
   "files": [
-    "src"
+    "src",
+    "resources"
   ],
   "dependencies": {
     "@eclipse-che/plugin": "^0.0.1-1547747419",
@@ -15,7 +16,7 @@
     "vscode-ws-jsonrpc": "^0.0.2-1"
   },
   "devDependencies": {
-    "@theia/plugin": "next",
+    "@theia/plugin": "0.3.19",
     "@theia/plugin-packager": "latest",
     "clean-webpack-plugin": "^0.1.19",
     "rimraf": "2.6.2",
@@ -25,6 +26,20 @@
     "webpack": "^4.1.1",
     "webpack-cli": "^3.1.1"
   },
+  "contributes": {
+    "configuration": {
+        "type": "object",
+        "title": "Che task preview configuration",
+        "properties": {
+            "che.task.preview.notifications": {
+                "type": "string",
+                "default": "on",
+                "enum": ["on", "alwaysPreview", "alwaysGoTo", "off"],
+                "description": "Enable/disable the notifications with a proposal to open a Che task's preview URL. Can be: 'on', 'alwaysPreview', 'alwaysGoTo' or 'off'."
+            }
+        }
+    }
+},
   "scripts": {
     "prepare": "yarn run clean && yarn run build",
     "clean": "rimraf lib",

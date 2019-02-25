@@ -15,7 +15,8 @@
                 "--no-cluster"
             ],
             "env": {
-                "NODE_ENV": "development"
+                "NODE_ENV": "development",
+                "CHE_WORKSPACE_ID": "workspace3m4mv2w7w2u3bc02"
             },
             "sourceMaps": true,
             "outFiles": [

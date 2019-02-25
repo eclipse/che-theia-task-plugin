@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2019 Red Hat, Inc.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
+
 import { TaskDefinition } from '@theia/plugin';
 
 export const CHE_TASK_TYPE: string = 'che';
@@ -15,6 +16,7 @@ export const PREVIEW_URL_ATTRIBUTE: string = 'previewUrl';
 
 export interface CheTaskDefinition extends TaskDefinition {
     readonly target?: Target,
+    readonly command: string,
     readonly previewUrl?: string
 }
 

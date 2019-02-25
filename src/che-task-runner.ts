@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2019 Red Hat, Inc.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@ import { MachineExecClient, MachineExec } from './machine/machine-exec-client';
 import { CheWorkspaceClient } from './che-workspace/che-workspace-client';
 import { TerminalWidgetFactory } from './machine/terminal-widget';
 
-// CHE task gets ID at creating in che task service https://github.com/eclipse/che-theia/pull/8/files#diff-efd82b45e452075d5754709fd62484c1R89
+// CHE task gets ID at creating in che task service https://github.com/eclipse/che-theia/blob/master/extensions/eclipse-che-theia-plugin-ext/src/node/che-task-service.ts#L89
 const STUB_TASK_ID: number = -1;
 
 @injectable()
@@ -34,17 +34,13 @@ export class CheTaskRunner {
      * Runs a task from the given task configuration which must have a target property specified.
      */
     async run(taskConfig: che.TaskConfiguration, ctx?: string): Promise<che.Task> {
-        const taskType = taskConfig.type;
-        if (taskType !== CHE_TASK_TYPE) {
-            throw new Error(`Unsupported task type: ${taskType}`);
+        console.log('=========================== CONTEXT ' + ctx);
+        const { type, label, ...definition } = taskConfig;
+        if (type !== CHE_TASK_TYPE) {
+            throw new Error(`Unsupported task type: ${type}`);
         }
 
-        const properties = taskConfig.properties as { [key: string]: any };
-        if (!properties) {
-            throw new Error(`Che task config must have additional properties specified`);
-        }
-
-        const target = properties.target;
+        const target = definition.target;
         if (!target) {
             throw new Error(`Che task config must have 'target' property specified`);
         }
@@ -59,6 +55,8 @@ export class CheTaskRunner {
             throw new Error(`Che task config must have 'target.machineName' property specified`);
         }
 
+        console.log('=========================== command777 ' + JSON.stringify(taskConfig));
+
         const machineExec: MachineExec = {
             identifier: {
                 machineName: machineName,
@@ -72,7 +70,9 @@ export class CheTaskRunner {
             const execId = await this.machineExecClient.getExecId(machineExec);
 
             const terminalWidget = await this.terminalWidgetFactory.createWidget({ title: taskConfig.label, terminalId: execId });
-            terminalWidget.connectTerminalProcess();
+            terminalWidget.connectTerminalProcess().then(() => {
+                // console.log('///777 promise "connectTerminalProcess" is resolved');
+            });
 
             return new Promise<che.Task>((resolve) => {
                 const result: che.Task = {
