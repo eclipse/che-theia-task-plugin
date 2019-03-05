@@ -60,7 +60,8 @@ export class CheTaskResolver implements TaskResolver {
             command: await this.variableResolverService.resolve(cheTaskConfig.command),
             target: resultTarget,
             previewUrl: cheTaskConfig.previewUrl,
-            _source: 'che'
+            _source: 'che',
+            _scope: undefined
         };
         return resultTask;
     }
