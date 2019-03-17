@@ -37,7 +37,9 @@ export class CheTaskWatcher implements FrontendApplicationContribution {
         const wsRoot = await this.workspaceService.roots;
         // WIP workspace folder is roots[0] https://github.com/theia-ide/theia/commit/80f402c621fe197130eae7abd22a0d89008b4ef1
         // Beware, workspace folder concept will diseappear in the next PR.
-        this.workspaceRootUri = wsRoot[0].uri;
+        if (wsRoot.length > 0) {
+            this.workspaceRootUri = wsRoot[0].uri;
+        }
 
         this.taskWatcher.onTaskCreated((event: TaskInfo) => {
             if (this.isEventForThisClient(event.ctx)) {

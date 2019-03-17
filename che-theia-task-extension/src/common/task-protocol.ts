@@ -21,7 +21,8 @@ export interface CheTaskConfiguration extends TaskConfiguration {
 
 export interface Target {
     workspaceId?: string,
-    machineName?: string
+    machineName?: string,
+    workingDir?: string
 }
 
 export interface CheTaskInfo extends TaskInfo {
