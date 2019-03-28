@@ -48,7 +48,7 @@ export class CheTaskRunner implements TaskRunner {
                 machineName: taskConfig.target.machineName,
                 workspaceId: taskConfig.target.workspaceId
             },
-            cmd: ['sh', '-c', taskConfig.command],
+            cmd: ['sh', '-c', '\'' + taskConfig.command + '\'' ],
             tty: true
         };
 
