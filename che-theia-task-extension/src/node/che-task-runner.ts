@@ -51,6 +51,7 @@ export class CheTaskRunner implements TaskRunner {
             cmd: ['sh', '-c', '\'' + taskConfig.command + '\'' ],
             tty: true
         };
+        console.log('machineExec: ' + machineExec);
 
         let execId = 0;
         try {
