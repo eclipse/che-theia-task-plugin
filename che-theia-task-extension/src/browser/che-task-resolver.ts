@@ -54,6 +54,10 @@ export class CheTaskResolver implements TaskResolver {
             resultTarget.machineName = await this.machinePicker.pick();
         }
 
+        if (target && target.workingDir) {
+            resultTarget.workingDir = target.workingDir;
+        }
+
         const resultTask: CheTaskConfiguration = {
             type: cheTaskConfig.type,
             label: cheTaskConfig.label,

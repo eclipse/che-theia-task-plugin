@@ -32,6 +32,7 @@ export class CheTaskProvider implements TaskProvider {
                 label: `${command.name!}`,
                 command: command.commandLine!,
                 target: {
+                    workingDir: this.getCommandAttribute(command, 'workingDir'),
                     machineName: this.getCommandAttribute(command, 'machineName')
                 },
                 previewUrl: this.getCommandAttribute(command, 'previewUrl'),
